@@ -51,8 +51,8 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Stations.fs" />
     <Compile Include="Ritten.fs" />
+    <Compile Include="Stations.fs" />
     <None Include="Script.fsx" />
     <None Include="RET.HLT">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
