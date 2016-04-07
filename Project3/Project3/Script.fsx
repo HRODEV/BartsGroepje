@@ -16,8 +16,8 @@ let metroStations = Stations.ConnvertStopsToStations metroStops
 
 open System.IO
 
-let filePath = __SOURCE_DIRECTORY__ + "\points.csv"
+//let filePath = __SOURCE_DIRECTORY__ + "\points.csv"
 
-let wr = new System.IO.StreamWriter(filePath)
-"name,x,y\n" + (metroStations |> List.map (fun st -> sprintf "%s,%f,%f\n" st.Name st.RDX st.RDY) |> List.fold (+) "") |> wr.Write
-wr.Close()
+//let wr = new System.IO.StreamWriter(filePath)
+//"name,x,y\n" + (metroStations |> List.map (fun st -> sprintf "%s,%f,%f\n" st.Name st.RDX st.RDY) |> List.fold (+) "") |> wr.Write
+//wr.Close()

@@ -48,10 +48,10 @@ let FilterMetroStops stationStops (rides:Ritten.rit list) =
     |> List.filter (fun station -> ritStationCodes |> List.exists(fun code -> code = station.Code))
 
 let ConnvertStopsToStations (stops: StationStop list) =
-    let groups = stops |> List.groupBy (fun station -> station.Name)
+    let groups = stops |> Seq.groupBy (fun station -> station.Name)
     groups 
-    |> List.map (fun group -> 
+    |> Seq.map (fun group -> 
         {Name=(group |> fst);
-        RDX=((group |> snd) |> List.head).RDX;
-        RDY=((group |> snd) |> List.head).RDY; Stops=group |> snd})
+        RDX=((group |> snd) |> Seq.head).RDX;
+        RDY=((group |> snd) |> Seq.head).RDY; Stops= (snd group) |> Seq.toList })
 
