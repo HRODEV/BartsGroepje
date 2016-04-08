@@ -146,15 +146,53 @@ let MetroProgram() (dt : GameTime) : Coroutine<Unit, Metro> =
 
 let yield_ = fun s -> Wait((fun s -> Done((), s)), s)
 
-let DriveMetro() (dt : GameTime ) : Coroutine<Unit, Metro> = 
-    fun metro -> Done((), metro)
 
 let MetroProgram2() (dt : GameTime) : Coroutine<Unit, Metro> = 
-    fun metro -> 
+    let DriveMetro (time : float32) (dt : GameTime) : Coroutine<bool, Metro> = fun metro -> 
+        match metro.Station.Next with
+        | Some nextStation ->   let duration = nextStation.Arrival - metro.Station.Arrival
+                                let newTime = (time + ((float32)dt.ElapsedGameTime.Milliseconds / 1000.0f))
+                                let disX = (nextStation.Position.X - metro.Station.Position.X)
+                                let disY = (nextStation.Position.Y - metro.Station.Position.Y)
+                                let newPosX = if metro.Station.Position.X <> nextStation.Position.X then easeInOutQuad2 time metro.Station.Position.X disX duration else nextStation.Position.X
+                                let newPosY = if metro.Station.Position.Y <> nextStation.Position.Y then easeInOutQuad2 time metro.Station.Position.Y disY duration else nextStation.Position.Y
+                                Done(newTime >= duration , {metro with Position = new Vector2(newPosX, newPosY); Status = Moving newTime})
+        | None -> Done(true, metro)
+
+
+
+
+    let WaitMetro (r : float32) (g : GameTime) : Coroutine<float32, Metro> = fun metro ->   
+        let newTime = (r - ((float32)dt.ElapsedGameTime.Milliseconds / 1000.0f))
+        Done(newTime, metro)
+
+    let SetMetroStatus (status : TrainStatus) : Coroutine<Unit, Metro> = fun metro -> 
+        Done((), {metro with Status = status})
+
+    let SetNextStation : Coroutine<Unit, Metro> = fun metro -> 
+        match metro.Station.Next with
+        | Some nextStation -> Done((), {metro with Station = nextStation})
+        | None -> Done((), metro)
+
     co{
-        let! newMetro = DriveMetro() dt metro
-        return newMetro 
-    }
+        let! metro = getState
+        match metro.Status with
+        | Waiting r ->  let! timeRemaining = WaitMetro r dt; 
+                        if timeRemaining > 0.0f then
+                            do! SetMetroStatus (Waiting timeRemaining)
+                            do! yield_
+                        else
+                            do! SetMetroStatus (Moving (0.0f))
+                            return ()
+        | Moving t ->   let! arrived = DriveMetro t dt
+                        if (arrived = true) then
+                            do! SetNextStation
+                            do! SetMetroStatus (Waiting (1.0f))
+                            return ()
+                        else
+                            do! yield_
+        | Arrived ->    return ()
+      }
 
 type GameState = {
     Metro : Metro
