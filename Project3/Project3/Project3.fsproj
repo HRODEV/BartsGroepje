@@ -64,6 +64,7 @@
     <Compile Include="DBCommunication.fs" />
     <None Include="packages.config" />
     <None Include="app.config" />
+    <None Include="DatabaseFromERD.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
