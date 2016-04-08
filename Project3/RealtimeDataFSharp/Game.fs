@@ -97,6 +97,34 @@ let co = CoroutineBuilder()
 
 
 let getState = fun s -> Done(s, s)
+(*
+type metro
+    stations : station list
+    currentstation : station
+    position : vector2
+    Behaviors : Coroutine list
+    factor : float
+
+metro -> coroutine 
+    {
+        coroutine that uses time to measure speed
+    }
+
+    { 
+        while true
+            for s in stations 
+                .||
+                    { wait position above s 
+                      wait for online notification }
+                    { online notification its arrived }
+                .||
+                    { wait 10 second }
+                    { online notification its left the station }
+    
+    }
+
+*)
+
 
 type Metro = {
     Line : Line
@@ -162,14 +190,14 @@ let MetroProgram2() (dt : GameTime) : Coroutine<Unit, Metro> =
 
 
 
-    let WaitMetro (r : float32) (g : GameTime) : Coroutine<float32, Metro> = fun metro ->   
+    let inline WaitMetro (r : float32) (g : GameTime) : Coroutine<float32, Metro> = fun metro ->   
         let newTime = (r - ((float32)dt.ElapsedGameTime.Milliseconds / 1000.0f))
         Done(newTime, metro)
 
-    let SetMetroStatus (status : TrainStatus) : Coroutine<Unit, Metro> = fun metro -> 
+    let inline SetMetroStatus (status : TrainStatus) : Coroutine<Unit, Metro> = fun metro -> 
         Done((), {metro with Status = status})
 
-    let SetNextStation : Coroutine<Unit, Metro> = fun metro -> 
+    let inline SetNextStation metro = 
         match metro.Station.Next with
         | Some nextStation -> Done((), {metro with Station = nextStation})
         | None -> Done((), metro)
