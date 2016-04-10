@@ -64,12 +64,10 @@
     <Compile Include="DBCommunication.fs" />
     <None Include="packages.config" />
     <None Include="app.config" />
-    <None Include="DatabaseFromERD.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
       <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\MonoGame.Framework.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
