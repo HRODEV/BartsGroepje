@@ -48,12 +48,12 @@ let private WriteSQLFile (fname: string) (seq: string seq) =
     ()
 
 let makeTripQuery' (t: trip) =
-    let dates = t.active_days
+    let dates = t.active_days |> List.filter (fun d -> d < new DateTime(2015, 12, 14))
     let startTime = t.stops.[0].departure
-    let getScopeID = "\nset @lastTripID = SCOPY_IDENTITY();\n"
+    let getScopeID = "\nset @lastTripID = SCOPE_IDENTITY();\n"
     dates |> List.map ( fun d ->
         let ridequery = (sprintf "INSERT INTO [retdb].[dbo].[Rides] VALUES ('%A');" ((d + startTime).ToString())) 
-        let stopquery =  (t.stops |> List.map (fun s -> (sprintf @"INSERT INTO [retdb].[dbo].[RideStops] VALUES ('%s', @lastTripID, (SELECT TOP 1 [id] FROM [retdb].[dbo].[Platforms] WHERE ([code]] == '%s');" ((startTime + s.arrival).ToString()) s.id)) |> List.fold (+) "" )
+        let stopquery =  (t.stops |> List.map (fun s -> (sprintf @"INSERT INTO [retdb].[dbo].[RideStops] VALUES ('%s', @lastTripID, (SELECT TOP 1 [id] FROM [retdb].[dbo].[Platforms] WHERE ([code] == '%s')));" ((startTime + s.arrival).ToString()) s.id)) |> List.fold (+) "" )
         (ridequery + getScopeID + stopquery)
     ) |> List.fold (+) ""
 
