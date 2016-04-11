@@ -10,7 +10,7 @@ open System.Collections.Generic
 
 open Game
 
-let dataUri = "http://opendata.technolution.nl/opendata/parkingdata/v1/dynamic/23f58b84-8905-474e-b0de-366a3fd4457a";
+//let dataUri = "http://opendata.technolution.nl/opendata/parkingdata/v1/dynamic/23f58b84-8905-474e-b0de-366a3fd4457a";
 
 
 [<EntryPoint>]
