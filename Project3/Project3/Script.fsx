@@ -11,9 +11,6 @@ let ritten = Ritten.ritten ()
 let metroStops = Stations.FilterMetroStops stops ritten
 let metroStations = Stations.ConnvertStopsToStations metroStops
 
-
-    
-
 open System.IO
 
 //let filePath = __SOURCE_DIRECTORY__ + "\points.csv"

@@ -1,7 +1,6 @@
 ﻿module HLT_parser
 open System.IO
 
-
 type StationStop = 
     {
         OverStap: bool

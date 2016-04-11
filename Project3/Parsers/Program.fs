@@ -19,7 +19,8 @@ let metroStops = HLT_parser.FilterMetroStops stops trips
 let metroStations = HLT_parser.ConvertStopsToStations metroStops
 
 SQL.CreateStationQuery metroStations
-SQL.CreateStationQuery metroStations
+// SQL.CreateStationQuery metroStations
+// SQL.CreatePlatformQuery ... 
 SQL.CreateStopQuery trips
 SQL.CreateTripQuery trips
 SQL.CreateActiveOnQuery trips

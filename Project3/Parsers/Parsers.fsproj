@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A28FC377-BAB2-4787-9E5A-773558D18820}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>Parsers</RootNamespace>
     <AssemblyName>Parsers</AssemblyName>
   </PropertyGroup>
@@ -30,21 +30,6 @@
     <PlatformTarget>
     </PlatformTarget>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="mscorlib" />
-    <Reference Include="FSharp.Core" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="VTN_parser.fs" />
-    <Compile Include="PAS_parser.fs" />
-    <Compile Include="HLT_parser.fs" />
-    <Compile Include="SQL.fs" />
-    <Compile Include="Program.fs" />
-  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '11.0'">
       <PropertyGroup Condition="Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')">
@@ -59,8 +44,27 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
-    <None Include="RET.HLT" />
-    <None Include="RET.PAS" />
-    <None Include="RET.VTN" />
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="VTN_parser.fs" />
+    <Compile Include="PAS_parser.fs" />
+    <Compile Include="HLT_parser.fs" />
+    <Compile Include="SQL.fs" />
+    <Compile Include="Program.fs" />
+    <None Include="RET.HLT">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RET.PAS">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RET.VTN">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="FSharp.Core" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
   </ItemGroup>
 </Project>
