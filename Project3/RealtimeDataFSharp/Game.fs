@@ -199,6 +199,7 @@ type StationDrawable = {
 type GameState = {
     Metro : Metro
     StationList : Station list
+    Map : Texture2D
 }
 
 //let connectStation (s1 : Station) (s2 : Station) =
@@ -237,6 +238,13 @@ let rec costep coroutine state =
   | Done(_, newState) ->  (fun s -> Done((), s)), newState
   | Wait(c', s') -> costep c' s'
 
+let spriteLoader (path) graphics = 
+    use imagePath = System.IO.File.OpenRead(path)
+    let texture = Texture2D.FromStream(graphics, imagePath)
+    let textureData = Array.create<Color> (texture.Width * texture.Height) Color.Transparent
+    texture.GetData(textureData)
+    texture
+
 type TrainSimulation() as this =
     inherit Game()
  
@@ -249,6 +257,7 @@ type TrainSimulation() as this =
     let mutable GameState = {   
         Metro = Unchecked.defaultof<Metro>
         StationList = []
+        Map = Unchecked.defaultof<Texture2D>
     }
 
     override x.Initialize() =
@@ -261,7 +270,7 @@ type TrainSimulation() as this =
     override this.LoadContent() =
         do spriteBatch <- new SpriteBatch(this.GraphicsDevice)
 
-        //let parkImage = spriteLoader "parking.png" this.GraphicsDevice
+        let BackgroundMap = spriteLoader "Rotterdam.png" this.GraphicsDevice
 
         //movableThingsImages <- [carImage; boatImage];
 
@@ -276,14 +285,14 @@ type TrainSimulation() as this =
             |> List.map (fun st ->
                 count <- count + 2.0f
                 printfn "Name: %A X: %A Y: %A" st.Name ((((float32)st.X - 80000.0f) / 20.0f) - 200.0f) (((((float32)st.Y - 420300.0f) / 20.0f) - 300.0f) * -1.0f)
-                {Name = st.Name; Next = None; Arrival = count; Position = new Vector2((((float32)st.X - 80000.0f) / 20.0f) - 100.0f, (((((float32)st.Y - 430000.0f) / 20.0f) - 300.0f) * -1.0f) + 400.0f)}
+                {Name = st.Name; Next = None; Arrival = count; Position = new Vector2((((float32)st.X - 80000.0f) / 20.0f) + 20.0f, (((((float32)st.Y - 430000.0f) / 20.0f) - 300.0f) * -1.0f) + 400.0f)}
             ))
 
 
         //let newTrain = {Line = A; Station = combinedTrack; Position = combinedTrack.Position; Status = TrainStatus.Waiting 0.0f}
         let newMetro = {Line = A; Station = (combinedTrack stationList.Head stationList.Tail); Position = stationList.Head.Position; Status = TrainStatus.Waiting 0.0f; Behaviour = MetroProgram2()}
 
-        GameState <- {GameState with Metro = newMetro; StationList = stationList}
+        GameState <- {GameState with Metro = newMetro; StationList = stationList; Map = BackgroundMap}
         
         //let a = {ID = 0; Components = [Position(10.0f, 10.0f)];}
 
@@ -325,20 +334,22 @@ type TrainSimulation() as this =
         
         spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
+        spriteBatch.Draw(GameState.Map, new Rectangle(0, 0, GameState.Map.Width, GameState.Map.Height), Color.White)
+
         GameState.StationList 
         |> List.iter(
             fun s -> 
                 spriteBatch.Draw(
                     texture, new Rectangle(
-                        (int)s.Position.X, (int)s.Position.Y, 20, 20
+                        (int)s.Position.X, (int)s.Position.Y, 10, 10
                     ),
                     match s.Name with
-(*                  | "Blaak" -> Color.Aqua
+                    | "Blaak" -> Color.Aqua
                     | "Pernis" -> Color.Aquamarine
                     | "Rotterdam Centraal" -> Color.OrangeRed
                     | "Pijnacker Centrum" -> Color.Beige
                     | "Nesselande" -> Color.BlanchedAlmond
- *)                 | _ -> Color.Green
+                    | _ -> Color.Green
                 )
         );
 
