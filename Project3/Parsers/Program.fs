@@ -18,7 +18,7 @@ let trips = PAS_parser.parse_PAS PAS_file
 let metroStops = HLT_parser.FilterMetroStops stops trips
 let metroStations = HLT_parser.ConvertStopsToStations metroStops
 
+printfn "Creating platforms"
 SQL.CreatePlatformQuery metroStations
-SQL.CreateStopQuery trips
+printfn "Creating trips"
 SQL.CreateTripQuery trips
-SQL.CreateActiveOnQuery trips

@@ -38,7 +38,6 @@ let makePlatformQuery' (station:Station) =
     StationQ + getscopeID + platforms
 
 
-
 let private WriteSQLFile (fname: string) (seq: string seq) =
     printfn "Creating SQL file %A: " fname
     let outf = new StreamWriter(fname)
@@ -48,8 +47,16 @@ let private WriteSQLFile (fname: string) (seq: string seq) =
     ) seq
     ()
 
+let makeTripQuery' (t: trip) =
+    let dates = t.active_days
+    let startTime = t.stops.[0].departure
+    let getScopeID = "\nset @lastTripID = SCOPY_IDENTITY();\n"
+    dates |> List.map ( fun d ->
+        let ridequery = (sprintf "INSERT INTO [retdb].[dbo].[Rides] VALUES ('%A');" ((d + startTime).ToString())) 
+        let stopquery =  (t.stops |> List.map (fun s -> (sprintf @"INSERT INTO [retdb].[dbo].[RideStops] VALUES ('%s', @lastTripID, (SELECT TOP 1 [id] FROM [retdb].[dbo].[Platforms] WHERE ([code]] == '%s');" ((startTime + s.arrival).ToString()) s.id)) |> List.fold (+) "" )
+        (ridequery + getScopeID + stopquery)
+    ) |> List.fold (+) ""
+
 //let CreateStationQuery (x: seq<Station>)    = x |> Seq.map  (fun x -> makeStationQuery x) |> WriteSQLFile "Stations.sql"
 let CreatePlatformQuery (x: seq<Station>)   = seq{ yield "Declare @lastStationID int;"; yield! (x |> Seq.map  (fun x -> makePlatformQuery' x)) }|> WriteSQLFile "Platforms.sql"
-let CreateTripQuery (x: trip list)          = x |> List.map (fun x -> makeTripQuery x) |> Seq.ofList |> WriteSQLFile "Trips.sql"
-let CreateStopQuery (x: trip list)          = x |> List.map (fun x -> List.map( fun y -> makeStopQuery x y) x.stops) |> List.fold (fun a s -> s @ a) [] |> Seq.ofList |> WriteSQLFile "Stops.sql"
-let CreateActiveOnQuery (x: trip list)      = x |> List.map (fun x -> List.map( fun y -> makeActiveOnQuery x y) x.active_days) |> List.fold (fun a s -> s @ a) [] |> Seq.ofList |> WriteSQLFile "ActiveOn.sql"
+let CreateTripQuery (x: trip list)          = seq{ yield "Declare @lastTripID int;"; yield! (x |> Seq.ofList |> Seq.map (fun s -> makeTripQuery' s)) }|> WriteSQLFile "Trips.sql"
