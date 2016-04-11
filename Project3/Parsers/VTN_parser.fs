@@ -12,4 +12,4 @@ let private parseline (date: System.DateTime) (line: string) =
             []
     (int (line.Substring (1,5) ), dates (line.Substring (7,98)) date)
 
-let GetVTNRecords (date: System.DateTime) = printfn "Parsing VTN"; System.IO.File.ReadAllLines(VTNFile) |> Array.map (parseline date) |> Map.ofArray
+let GetVTNRecords (date: System.DateTime) = printfn "Parsing VTN"; System.IO.File.ReadAllLines(VTN_file) |> Array.map (parseline date) |> Map.ofArray
