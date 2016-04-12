@@ -61,7 +61,7 @@ type Metro = {
             do! metro.Behaviour dt
         }
 
-type stationData = JsonProvider<"http://145.24.222.212/ret/odata/Stations/?$expand=PlatForms">
+type stationData = JsonProvider<"Samples\StationsAndPlatformsSample.json">
 
 type StationDrawable = {
     X:float
