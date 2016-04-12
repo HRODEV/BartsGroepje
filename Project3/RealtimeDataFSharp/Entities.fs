@@ -6,6 +6,7 @@ open Microsoft.Xna.Framework.Input
 open FSharp.Data
 open Coroutines
 open Utilities
+open System
 
 type Line = A | B | C | D | E
 
@@ -61,9 +62,9 @@ type Metro = {
             do! metro.Behaviour dt
         }
 
-type stationData = JsonProvider<"Samples\StationsAndPlatformsSample.json">
+type stationData = JsonProvider<"Samples/StationsAndPlatformsSample.json">
 
-type rideData = JsonProvider<"Samples\RidesAndRideStopsAndPlatformAndStation.json">
+type rideData = JsonProvider<"Samples/RidesAndRideStopsAndPlatformAndStation.json">
 
 type StationDrawable = {
     X:float
@@ -71,7 +72,14 @@ type StationDrawable = {
 }
 
 type GameState = {
-    Metro : Metro
+    Metros : Metro list
     StationList : Station list
     Map : Texture2D
-}
+    Rides: rideData.Value list
+    Time    :   DateTime
+} with
+    member this.GetData =
+        if this.Rides.Length < 10 then
+            rideData.Load("http://145.24.222.212/ret/odata/Rides/?$expand=RideStops/Platform&$top=20&$orderby=Date").Value
+            |> Array.filter (fun x -> (List.contains x this.Rides)) |> List.ofArray
+        

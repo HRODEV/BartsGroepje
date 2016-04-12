@@ -80,6 +80,7 @@ type TrainSimulation() as this =
         Metros = []
         StationList = []
         Map = Unchecked.defaultof<Texture2D>
+        Rides = rideData.Load("http://145.24.222.212/ret/odata/Rides/?$expand=RideStops/Platform&$top=20&$orderby=Date").Value |> List.ofArray
         Time = new DateTime()
     }
 
