@@ -47,16 +47,22 @@ let private WriteSQLFile (fname: string) (seq: string seq) =
     ) seq
     ()
 
+let dToString (d:DateTime) =
+    //yyyymmdd HH:MM:SS
+    sprintf "%4i-%2i-%2i %2i:%2i:00" d.Year d.Month d.Day d.Hour d.Minute
+
 let makeTripQuery' (t: trip) =
-    let dates = t.active_days |> List.filter (fun d -> d < new DateTime(2015, 12, 14))
+    let dates = t.active_days //|> List.filter (fun d -> d < new DateTime(2015, 12, 22))
     let startTime = t.stops.[0].departure
-    let getScopeID = "\nset @lastTripID = SCOPE_IDENTITY();\n"
-    dates |> List.map ( fun d ->
-        let ridequery = (sprintf "INSERT INTO [retdb].[dbo].[Rides] VALUES ('%A');" ((d + startTime).ToString())) 
-        let stopquery =  (t.stops |> List.map (fun s -> (sprintf @"INSERT INTO [retdb].[dbo].[RideStops] VALUES ('%s', @lastTripID, (SELECT TOP 1 [id] FROM [retdb].[dbo].[Platforms] WHERE ([code] == '%s')));" ((startTime + s.arrival).ToString()) s.id)) |> List.fold (+) "" )
-        (ridequery + getScopeID + stopquery)
-    ) |> List.fold (+) ""
+    let getScopeID = "\nset @lastTripID = SCOPE_IDENTITY();"
+    let sql =
+        (dates |> List.map ( fun d ->
+            let ridequery = (sprintf "INSERT INTO [retdb].[dbo].[Rides] VALUES ('%s');" ((d + startTime)  |> dToString)) 
+            let stopquery =  (t.stops |> List.map (fun s -> (sprintf @"INSERT INTO [retdb].[dbo].[RideStops] VALUES ('%s', @lastTripID, (SELECT TOP 1 [id] FROM [retdb].[dbo].[Platforms] WHERE [code] = '%s'));" ((d + s.arrival) |> dToString) s.id)) |> List.fold (+) "" )
+            (ridequery + getScopeID + stopquery)
+        ) |> List.fold (+) "")
+    "BEGIN TRANSACTION t\n"+ sql+"\nCOMMIT TRANSACTION t"
 
 //let CreateStationQuery (x: seq<Station>)    = x |> Seq.map  (fun x -> makeStationQuery x) |> WriteSQLFile "Stations.sql"
 let CreatePlatformQuery (x: seq<Station>)   = seq{ yield "Declare @lastStationID int;"; yield! (x |> Seq.map  (fun x -> makePlatformQuery' x)) }|> WriteSQLFile "Platforms.sql"
-let CreateTripQuery (x: trip list)          = seq{ yield "Declare @lastTripID int;"; yield! (x |> Seq.ofList |> Seq.map (fun s -> makeTripQuery' s)) }|> WriteSQLFile "Trips.sql"
+let CreateTripQuery (x: trip seq) n         = seq{ yield "Declare @lastTripID int;"; yield! (x |> Seq.map (fun s -> makeTripQuery' s) ) }|> WriteSQLFile ("trips/Trips"+n.ToString()+".sql")
