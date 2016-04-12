@@ -7,6 +7,7 @@ open FSharp.Data
 open Coroutines
 open Entities
 open Utilities
+open System
 
 let MetroProgram2() (dt : GameTime) : Coroutine<Unit, Metro> =
     let DriveMetro (time : float32) (dt : GameTime) : Coroutine<bool, Metro> = fun metro ->
@@ -45,18 +46,14 @@ let MetroProgram2() (dt : GameTime) : Coroutine<Unit, Metro> =
         | Moving t ->   let! arrived = DriveMetro t dt
                         if (arrived = true) then
                             do! SetNextStation
-                            do! SetMetroStatus (Waiting (2.0f))
+                            do! SetMetroStatus (Waiting (0.0f))
                             return ()
                         else
                             do! yield_
         | Arrived ->    return ()
       }
 
-let oostplein =  {Name = "Oostplein"; Next = None; Arrival = 25.0f; Position = new Vector2(50.0f, 300.0f)}
-let blaak = {Name = "Blaak"; Next = None; Arrival = 20.0f; Position = new Vector2(350.0f, 200.0f)}
-let beurs = {Name = "Beurs"; Next = None; Arrival = 12.0f; Position = new Vector2(350.0f, 0.0f)}
-let eendrachtsplein = {Name = "Eendrachtsplein"; Next = None; Arrival = 9.0f; Position = new Vector2(250.0f, 0.0f)}
-let dijkzigt = {Name = "Dijkzigt"; Next = None; Arrival = 0.0f; Position = new Vector2(300.0f, 300.0f) }
+
 
 let combinedTrack x xs = 
     xs
@@ -80,14 +77,16 @@ type TrainSimulation() as this =
     let mutable texture = Unchecked.defaultof<Texture2D>
 
     let mutable GameState = {   
-        Metro = Unchecked.defaultof<Metro>
+        Metros = []
         StationList = []
         Map = Unchecked.defaultof<Texture2D>
+        Time = new DateTime()
     }
 
     override x.Initialize() =
         graphics.PreferredBackBufferWidth <- 1920;  // set this value to the desired width of your window
         graphics.PreferredBackBufferHeight <- 1080;   // set this value to the desired height of your window
+        graphics.IsFullScreen <- true
         graphics.ApplyChanges();
         x.IsMouseVisible <- true;
         do base.Initialize()
@@ -96,6 +95,7 @@ type TrainSimulation() as this =
         do spriteBatch <- new SpriteBatch(this.GraphicsDevice)
 
         let BackgroundMap = spriteLoader "Rotterdam.png" this.GraphicsDevice
+        let MetroIcon = spriteLoader "metroicon.png" this.GraphicsDevice
 
         texture <- new Texture2D(this.GraphicsDevice, 1, 1)
         texture.SetData([| Color.White |])
@@ -107,20 +107,30 @@ type TrainSimulation() as this =
             |> Array.toList
             |> List.map (fun st ->
                 count <- count + 2.0f
-                printfn "Name: %A X: %A Y: %A" st.Name ((((float32)st.X - 80000.0f) / 20.0f) - 200.0f) (((((float32)st.Y - 420300.0f) / 20.0f) - 300.0f) * -1.0f)
-                {Name = st.Name; Next = None; Arrival = count; Position = new Vector2((((float32)st.X - 80000.0f) / 20.0f) + 20.0f, (((((float32)st.Y - 430000.0f) / 20.0f) - 300.0f) * -1.0f) + 400.0f)}
+                printfn "Name: %A X: %A Y: %A" st.Name st.X st.Y
+                let scaler = ScaleStationPosition (new Vector2((float32)graphics.PreferredBackBufferWidth, (float32)graphics.PreferredBackBufferHeight)) (CreateViewRectangle(new Point(81493, 443705), new Point(100854, 427738))) 0.95f
+                //printfn "Name: %A X: %A Y: %A" st.Name ((((float32)st.X - 83299.0f) / 12.329f) - 0.0f) (((((float32)st.Y - 452622.0f) / 12.863f) - 0.0f) * -1.0f)
+                {
+                    Name = st.Name;
+                    Next = None;
+                    Arrival = count;
+                    Position = scaler (new Vector2((float32)st.X, (float32)st.Y))
+                    Texture = MetroIcon;
+                }
             ))
 
-        let newMetro = {Line = A; Station = (combinedTrack stationList.Head stationList.Tail); Position = stationList.Head.Position; Status = TrainStatus.Waiting 0.0f; Behaviour = MetroProgram2()}
+        let newMetro = {Line = A; Station = (combinedTrack stationList.Head stationList.Tail); Position = stationList.Head.Position; Status = TrainStatus.Waiting 1.0f; Behaviour = MetroProgram2()}
+        let secondMetro = Metro.Create (combinedTrack stationList.Tail.Tail.Head stationList.Tail.Tail.Tail) (MetroProgram2())
 
-        GameState <- {GameState with Metro = newMetro; StationList = stationList; Map = BackgroundMap}
+        GameState <- {GameState with Metros = [newMetro; secondMetro]; StationList = stationList; Map = BackgroundMap}
         ()
  
     override this.Update (gameTime) =
 
-        let leftCo, newTrain = costep (Metro.Update gameTime) GameState.Metro
+        let leftCo, newTrain = costep (Metro.Update gameTime) GameState.Metros.Head
+        let leftCo, newTrain2 = costep (Metro.Update gameTime) GameState.Metros.[1]
 
-        GameState <- {GameState with Metro = newTrain}
+        GameState <- {GameState with Metros = [newTrain; newTrain2]}
         ()
         
     override this.Draw (gameTime) =
@@ -135,24 +145,29 @@ type TrainSimulation() as this =
         |> List.iter(
             fun s -> 
                 spriteBatch.Draw(
-                    texture, new Rectangle(
-                        (int)s.Position.X, (int)s.Position.Y, 10, 10
+                    s.Texture, new Rectangle(
+                        (int)s.Position.X - 10, (int)s.Position.Y - 10, 20, 20
                     ),
                     match s.Name with
-                    | "Blaak" -> Color.Aqua
+                    | "De Akkers" -> Color.Aqua
                     | "Pernis" -> Color.Aquamarine
                     | "Rotterdam Centraal" -> Color.OrangeRed
-                    | "Pijnacker Centrum" -> Color.Beige
+                    | "De Terp" -> Color.Beige
                     | "Nesselande" -> Color.BlanchedAlmond
-                    | _ -> Color.Green
+                    | "Den Haag Centraal" -> Color.Red
+                    | _ -> Color.White
                 )
         );
 
-        spriteBatch.Draw(
-            texture, new Rectangle(
-                (int)GameState.Metro.Position.X, (int)GameState.Metro.Position.Y, 15, 15
-            ), 
-            Color.Red
-        ); 
-
+        GameState.Metros
+        |> List.iter(
+            fun m ->
+                spriteBatch.Draw(
+                    texture, new Rectangle(
+                        (int)m.Position.X - 7, (int)m.Position.Y - 7, 15, 15
+                    ), 
+                    Color.Red
+            ); 
+        )
+        
         spriteBatch.End()
