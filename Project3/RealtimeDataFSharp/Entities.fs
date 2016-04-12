@@ -63,6 +63,8 @@ type Metro = {
 
 type stationData = JsonProvider<"Samples\StationsAndPlatformsSample.json">
 
+type rideData = JsonProvider<"Samples\RidesAndRideStopsAndPlatformAndStation.json">
+
 type StationDrawable = {
     X:float
     Y:float
