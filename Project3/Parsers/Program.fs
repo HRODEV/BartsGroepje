@@ -21,4 +21,14 @@ let metroStations = HLT_parser.ConvertStopsToStations metroStops
 printfn "Creating platforms"
 SQL.CreatePlatformQuery metroStations
 printfn "Creating trips"
-SQL.CreateTripQuery trips
+let rec batch trips n =
+    if trips |> Seq.isEmpty then
+        ()
+    else
+        if trips |> Seq.length > 100 then
+            SQL.CreateTripQuery (trips |> Seq.take 100) n
+            batch (trips |> Seq.skip 100) (n+1)
+        else
+            SQL.CreateTripQuery (trips |> Seq.take (trips |> Seq.length)) n
+
+batch trips 0
