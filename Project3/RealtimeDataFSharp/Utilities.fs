@@ -19,7 +19,7 @@ let easeInOutQuad2 (currentTime : float32) (startPos : float32) (endPos : float3
 
 let CreateViewRectangle (p1: Point, p2: Point) = new Rectangle(p1, new Point(p2.X - p1.X, p1.Y - p2.Y))
 
-let ScaleStationPosition (screen: Vector2) (view: Rectangle) (padding: float32) (position: Vector2) =
+let ScalePosition (screen: Vector2) (view: Rectangle) (padding: float32) (position: Vector2) =
     let paddedHeight = screen.Y * padding
     let paddedWidth = screen.X * padding
     let viewwidth = (float32)view.Width
