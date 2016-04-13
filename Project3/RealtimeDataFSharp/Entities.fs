@@ -133,7 +133,7 @@ type GameState = {
 
     static member Create(scaler: Vector2 -> Vector2) =
         let stationList =  (stationData.Load("http://145.24.222.212/ret/odata/Stations").Value |> Array.map (fun st -> Station.Create(st, scaler))) |> List.ofArray
-        let rides = (rideData.Load("http://145.24.222.212/ret/odata/Rides/?$expand=RideStops/Platform&$top=20&$orderby=Date").Value) |> List.ofArray
+        let rides = (rideData.Load("http://145.24.222.212/ret/odata/Rides/?$expand=RideStops/Platform&$top=100&$orderby=Date").Value) |> List.ofArray
         { GameState.Zero() with
             Stations = stationList
             Rides = rides
@@ -150,9 +150,9 @@ type GameState = {
         }
 
     static member Update(gameState: GameState, dt: GameTime) =
-        let newMetros = gameState.Rides |> List.filter (fun m -> m.Date >= gameState.Time) |> List.map (fun r -> Metro.Create(A, r.RideStops |> Array.map(fun x -> RideStop.Create(x, scaler, 0)) |> List.ofArray, MetroProgram2()))
-        let remainingRides = gameState.Rides |> List.filter (fun m -> m.Date < gameState.Time)
+        let newMetros = gameState.Rides |> List.filter (fun m -> m.Date <= gameState.Time) |> List.map (fun r -> Metro.Create(A, r.RideStops |> Array.map(fun x -> RideStop.Create(x, scaler, 0)) |> List.ofArray, MetroProgram2()))
+        let remainingRides = gameState.Rides |> List.filter (fun m -> m.Date > gameState.Time)
 
-        let updatedTime = gameState.Time + (new TimeSpan(0,0,0,0,dt.ElapsedGameTime.Milliseconds * 100))
+        let updatedTime = gameState.Time + (new TimeSpan(0,0,0,0,dt.ElapsedGameTime.Milliseconds * 1))
         let UpdatedMetros = newMetros @ gameState.Metros |> List.filter (fun x -> x.Status <> Arrived) |> List.map (fun x -> Metro.Update updatedTime x)
         { gameState with Metros = UpdatedMetros; Time = updatedTime; Rides = remainingRides }
