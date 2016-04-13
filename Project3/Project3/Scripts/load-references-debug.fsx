@@ -7,3 +7,5 @@
 #r "../../packages/MySql.Data.6.9.8/lib/net40/MySql.Data.dll"
 #r "System.Data.dll"
 #r "System.Data.Linq.dll"
+#r "../../packages/FSharp.Data.2.2.5/lib/net40/FSharp.Data.dll"
+#r "System.Xml.Linq.dll"
