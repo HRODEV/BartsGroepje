@@ -80,7 +80,7 @@ type TrainSimulation() as this =
         Metros = []
         StationList = []
         Map = Unchecked.defaultof<Texture2D>
-        Time = new DateTime()
+        //Time = new DateTime()
     }
 
     override x.Initialize() =
@@ -120,7 +120,7 @@ type TrainSimulation() as this =
             ))
 
         let newMetro = {Line = A; Station = (combinedTrack stationList.Head stationList.Tail); Position = stationList.Head.Position; Status = TrainStatus.Waiting 1.0f; Behaviour = MetroProgram2()}
-        let secondMetro = Metro.Create (combinedTrack stationList.Tail.Tail.Head stationList.Tail.Tail.Tail) (MetroProgram2())
+        let secondMetro = {Line = A; Station = (combinedTrack stationList.Tail.Tail.Head stationList.Tail.Tail.Tail.Tail); Position = stationList.Head.Position; Status = TrainStatus.Waiting 1.0f; Behaviour = MetroProgram2()}
 
         GameState <- {GameState with Metros = [newMetro; secondMetro]; StationList = stationList; Map = BackgroundMap}
         ()

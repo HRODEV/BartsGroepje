@@ -14,6 +14,7 @@ type Station = {
     Arrival : float32
     Next : Option<Station>
     Position : Vector2
+    Texture: Texture2D
 }
 
 type TrainStatus = 
@@ -61,9 +62,9 @@ type Metro = {
             do! metro.Behaviour dt
         }
 
-type stationData = JsonProvider<"Samples\StationsAndPlatformsSample.json">
+type stationData = JsonProvider<"Samples/StationsAndPlatformsSample.json">
 
-type rideData = JsonProvider<"Samples\RidesAndRideStopsAndPlatformAndStation.json">
+type rideData = JsonProvider<"Samples/RidesAndRideStopsAndPlatformAndStation.json">
 
 type StationDrawable = {
     X:float
@@ -71,7 +72,7 @@ type StationDrawable = {
 }
 
 type GameState = {
-    Metro : Metro
+    Metros : Metro list
     StationList : Station list
     Map : Texture2D
 }
