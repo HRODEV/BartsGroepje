@@ -12,6 +12,7 @@ type Line = A | B | C | D | E
 type stationData = JsonProvider<"Samples/StationsAndPlatformsSample.json">
 type rideData = JsonProvider<"Samples/RidesAndRideStopsAndPlatformAndStation.json">
 
+
 type RideStop = {
     Name : string
     Arrival : DateTime
@@ -40,8 +41,8 @@ type Station = {
       }
 
 type TrainStatus = 
-    | Waiting of float32
-    | Moving of float32
+    | Waiting of DateTime
+    | Moving of TimeSpan
     | Arrived
 
 type Metro = {
@@ -49,23 +50,71 @@ type Metro = {
     RideStops : RideStop list
     Position : Vector2
     Status : TrainStatus
-    Behaviour : GameTime -> Coroutine<Unit, Metro> 
+    Behaviour : DateTime -> Coroutine<Unit, Metro> 
 } with
-    static member Update (dt : GameTime) (x: Metro) =
+    static member Update (dt : DateTime) (x: Metro) =
         let _, metro' = costep (x.Behaviour dt) x
         metro'
 
     member this.Draw(texture: Texture2D, spriteBatch: SpriteBatch) =
             spriteBatch.Draw(texture, new Rectangle((int)this.Position.X - 2, (int)this.Position.Y - 2, 6, 6), Color.Red)
-    static member Create (line: Line, rideStops: RideStop list, behaviour: GameTime -> Coroutine<Unit, Metro>) =
+
+    static member Create (line: Line, rideStops: RideStop list, behaviour: DateTime -> Coroutine<Unit, Metro>) =
         {
             Line = line;
             RideStops = rideStops;
             Position = rideStops.Head.Position;
-            Status = Waiting 0.0f;
+            Status = Waiting (rideStops.Head.Departure)
             Behaviour = behaviour;
         }
 
+let MetroProgram2() (dt : DateTime) : Coroutine<Unit, Metro> =
+    let DriveMetro (time : TimeSpan) (dt : DateTime) : Coroutine<bool, Metro> = fun metro ->
+        match metro.RideStops with
+        | current :: t when not t.IsEmpty ->      
+                                let next = t.Head
+                                let duration = next.Arrival - current.Arrival
+
+                                let disX = (next.Position.X - current.Position.X)
+                                let disY = (next.Position.Y - current.Position.Y)
+                                let newPosX = if current.Position.X <> next.Position.X then easeInOutQuad2 ((float32)time.TotalSeconds) current.Position.X disX ((float32)duration.TotalSeconds) else next.Position.X
+                                let newPosY = if current.Position.Y <> next.Position.Y then easeInOutQuad2 ((float32)time.TotalSeconds) current.Position.Y disY ((float32)duration.TotalSeconds) else next.Position.Y
+                                Done(dt >= next.Arrival , {metro with Position = new Vector2(newPosX, newPosY); Status = Moving ((dt - current.Departure))})
+        | _ -> Done(true, metro)
+
+    let inline WaitMetro (departureTime : DateTime) (currentTime : DateTime) : Coroutine<TimeSpan, Metro> = fun metro ->   
+        let newTime = departureTime - currentTime
+        Done(newTime, metro)
+
+    let inline SetMetroStatus (status : TrainStatus) : Coroutine<Unit, Metro> = fun metro -> 
+        Done((), {metro with Status = status})
+
+    let inline SetNextStation (metro : Metro) = 
+        match metro.RideStops with
+        | h :: t -> Done((), {metro with RideStops = t})
+        | _ -> Done((), metro)
+
+    co{
+        let! metro = getState
+        match metro.Status with
+        | Waiting r ->  let! timeRemaining = WaitMetro r dt; 
+                        if timeRemaining > TimeSpan.Zero then
+                            do! SetMetroStatus (Waiting r)
+                            do! yield_
+                        else
+                            do! SetMetroStatus (Moving (TimeSpan.Zero))
+                            return ()
+        | Moving t ->   let! arrived = DriveMetro t dt
+                        if ((arrived = true) && (metro.RideStops.Length > 0)) then
+                            do! SetMetroStatus (Waiting (metro.RideStops.Head.Departure))
+                            do! SetNextStation
+                            return ()
+                        else if ((arrived = true) && (metro.RideStops.Length <= 0)) then
+                            do! SetMetroStatus Arrived
+                        else
+                            do! yield_
+        | Arrived ->    return ()
+      }
 
 type GameState = {
     Metros : Metro list
@@ -78,8 +127,9 @@ type GameState = {
         let backgroundImage = gameState.Textures.["background"]
         spriteBatch.Draw(backgroundImage, new Rectangle(0, 0, backgroundImage.Width, backgroundImage.Height), Color.White)
 
-        gameState.Metros |> List.iter(fun m -> m.Draw(gameState.Textures.["metro"], spriteBatch))
+
         gameState.Stations |> List.iter(fun s -> s.Draw(gameState.Textures.["station"], spriteBatch))
+        gameState.Metros |> List.iter(fun m -> m.Draw(gameState.Textures.["metro"], spriteBatch))
 
     static member Create(scaler: Vector2 -> Vector2) =
         let stationList =  (stationData.Load("http://145.24.222.212/ret/odata/Stations").Value |> Array.map (fun st -> Station.Create(st, scaler))) |> List.ofArray
@@ -87,6 +137,7 @@ type GameState = {
         { GameState.Zero() with
             Stations = stationList
             Rides = rides
+            Time = rides.Head.Date
         }
 
     static member Zero() =
@@ -99,5 +150,9 @@ type GameState = {
         }
 
     static member Update(gameState: GameState, dt: GameTime) =
-        let metros = gameState.Metros |> List.map (fun x -> Metro.Update dt x)
-        { gameState with Metros = metros }
+        let newMetros = gameState.Rides |> List.filter (fun m -> m.Date >= gameState.Time) |> List.map (fun r -> Metro.Create(A, r.RideStops |> Array.map(fun x -> RideStop.Create(x, scaler, 0)) |> List.ofArray, MetroProgram2()))
+        let remainingRides = gameState.Rides |> List.filter (fun m -> m.Date < gameState.Time)
+
+        let updatedTime = gameState.Time + (new TimeSpan(0,0,0,0,dt.ElapsedGameTime.Milliseconds * 100))
+        let UpdatedMetros = newMetros @ gameState.Metros |> List.filter (fun x -> x.Status <> Arrived) |> List.map (fun x -> Metro.Update updatedTime x)
+        { gameState with Metros = UpdatedMetros; Time = updatedTime; Rides = remainingRides }
