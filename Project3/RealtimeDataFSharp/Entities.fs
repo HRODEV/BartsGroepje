@@ -15,6 +15,7 @@ type Station = {
     Arrival : float32
     Next : Option<Station>
     Position : Vector2
+    Texture: Texture2D
 }
 
 type TrainStatus = 
