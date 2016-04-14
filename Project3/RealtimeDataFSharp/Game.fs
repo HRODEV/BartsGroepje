@@ -47,7 +47,11 @@ type TrainSimulation() as this =
                 Add("station", spriteLoader "metroicon.png" this.GraphicsDevice).
                 Add("metro", metrotexture)
 
-        gameState <- {GameState.Create(scaler) with Textures = textures}
+        let fonts = 
+            Map.empty.
+                Add("font1", {Image = (spriteLoader "Font.png" this.GraphicsDevice); Data = FontLoader.Load("Font.fnt")})
+
+        gameState <- {GameState.Create(scaler) with Textures = textures; Fonts = fonts}
         gameState <- {gameState with Metros = [Metro.Create(A, gameState.Rides.Head.RideStops |> Array.map(fun x -> RideStop.Create(x, scaler, 0)) |> List.ofArray, MetroProgram2())]
         }
         ()
