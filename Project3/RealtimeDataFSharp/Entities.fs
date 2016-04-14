@@ -27,6 +27,17 @@ type GameSpeed = {
         {  
             Speed = 1
         }
+    static member Draw(lastGameSpeed : GameSpeed, texture: Texture2D, spriteBatch: SpriteBatch) =
+        match lastGameSpeed.GetSpeed with
+        | 0 -> spriteBatch.Draw(texture, new Rectangle(1500, 800, 25, 25), Color.Yellow)
+        | 1 -> spriteBatch.Draw(texture, new Rectangle(1500, 800, 25, 25), Color.Yellow)
+        | 50 -> for i in 0 .. 1 do spriteBatch.Draw(texture, new Rectangle(1500 + i * 65, 800, 25, 25), Color.Yellow)
+        | 250 -> for i in 0 .. 2 do spriteBatch.Draw(texture, new Rectangle(1500 + i * 65, 800, 25, 25), Color.Yellow)
+        | 1000 -> for i in 0 .. 3 do spriteBatch.Draw(texture, new Rectangle(1500 + i * 65, 800, 25, 25), Color.Yellow)
+        | _ -> ()
+
+        
+
     static member Update(lastGameSpeed : GameSpeed) =
         let currentKeyboard = Keyboard.GetState()
         {
@@ -183,6 +194,7 @@ type GameState = {
 
 
         CounterBox.Draw(gameState.CounterBox, gameState.Fonts.["font1"], gameState.Textures.["metro"], spriteBatch)
+        GameSpeed.Draw(gameState.GameSpeed, gameState.Textures.["metro"], spriteBatch)
 
     static member Create(scaler: Vector2 -> Vector2) =
         let stationList =  (stationData.Load("http://145.24.222.212/v2/odata/Stations").Value |> Array.map (fun st -> Station.Create(st, scaler))) |> List.ofArray
