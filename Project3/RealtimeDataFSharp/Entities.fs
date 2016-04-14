@@ -61,9 +61,10 @@ type CounterBox = {
             Time = time
         }
     static member Draw(box: CounterBox, font: Font, texture: Texture2D, spriteBatch: SpriteBatch) = 
-        spriteBatch.Draw(texture, new Rectangle((int)box.Position.X, (int)box.Position.Y, 400, 100), Color.Black)
+        spriteBatch.Draw(texture, new Rectangle((int)box.Position.X, (int)box.Position.Y, 385, 125), Color.Black)
         let fr = new FontRenderer(font.Data, font.Image)
-        fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 15, box.Time.ToString())
+        fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 15, box.Time.DayOfWeek.ToString())
+        fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 65, box.Time.ToString())
         
     static member Update(box: CounterBox, newTime : DateTime) = 
         {
@@ -164,8 +165,8 @@ type GameState = {
         CounterBox.Draw(gameState.CounterBox, gameState.Fonts.["font1"], gameState.Textures.["metro"], spriteBatch)
 
     static member Create(scaler: Vector2 -> Vector2) =
-        let stationList =  (stationData.Load("http://145.24.222.212/ret/odata/Stations").Value |> Array.map (fun st -> Station.Create(st, scaler))) |> List.ofArray
-        let rides = (rideData.Load("http://145.24.222.212/ret/odata/Rides/?$expand=RideStops/Platform&$top=3000&$orderby=Date").Value) |> List.ofArray
+        let stationList =  (stationData.Load("http://145.24.222.212/v2/odata/Stations").Value |> Array.map (fun st -> Station.Create(st, scaler))) |> List.ofArray
+        let rides = (rideData.Load("http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform&$top=100&$orderby=Date").Value) |> List.ofArray
         { GameState.Zero() with
             Stations = stationList
             Rides = rides
@@ -180,7 +181,7 @@ type GameState = {
             Fonts = Map.empty
             Rides = []
             Time = new DateTime()
-            CounterBox = CounterBox.Create(new Vector2(1500.f, 975.f), new DateTime())
+            CounterBox = CounterBox.Create(new Vector2(1500.f, 950.f), new DateTime())
         }
 
     static member Update(gameState: GameState, dt: GameTime) =
@@ -188,6 +189,6 @@ type GameState = {
         let newMetros = gameState.Rides |> List.filter (fun m -> m.Date <= gameState.Time) |> List.map (fun r -> Metro.Create(A, r.RideStops |> Array.map(fun x -> RideStop.Create(x, scaler, 0)) |> List.ofArray, MetroProgram2()))
         let remainingRides = gameState.Rides |> List.filter (fun m -> m.Date > gameState.Time)
 
-        let updatedTime = gameState.Time + (new TimeSpan(0,0,0,0,dt.ElapsedGameTime.Milliseconds * 1000))
+        let updatedTime = gameState.Time + (new TimeSpan(0,0,0,0,dt.ElapsedGameTime.Milliseconds * 50))
         let UpdatedMetros = newMetros @ gameState.Metros |> List.filter (fun x -> x.Status <> Arrived) |> List.map (fun x -> Metro.Update updatedTime x)
         { gameState with Metros = UpdatedMetros; Time = updatedTime; Rides = remainingRides; CounterBox = newCounterBox }
