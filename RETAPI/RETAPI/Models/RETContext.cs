@@ -51,6 +51,7 @@ namespace RETAPI.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public virtual ICollection<Station> Stations { get; set; }
+        public virtual ICollection<Ride> Rides { get; set; }
     }
     public class Platform
     {
@@ -67,6 +68,10 @@ namespace RETAPI.Models
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
+        [ForeignKey("Line")]
+        public int LineId { get; set; }
+        public Line Line { get; set; }
+        public int Direction { get; set; }
         public virtual ICollection<RideStop> RideStops { get; set; }
     }
     public class RideStop

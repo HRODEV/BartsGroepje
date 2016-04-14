@@ -57,8 +57,10 @@ let makeTripQuery' (t: trip) =
     let getScopeID = "\nset @lastTripID = SCOPE_IDENTITY();"
     let sql =
         (dates |> List.map ( fun d ->
-            let ridequery = (sprintf "INSERT INTO [retdb].[dbo].[Rides] VALUES ('%s');" ((d + startTime)  |> dToString)) 
-            let stopquery =  (t.stops |> List.map (fun s -> (sprintf @"INSERT INTO [retdb].[dbo].[RideStops] VALUES ('%s', @lastTripID, (SELECT TOP 1 [id] FROM [retdb].[dbo].[Platforms] WHERE [code] = '%s'));" ((d + s.arrival) |> dToString) s.id)) |> List.fold (+) "" )
+            //need to add connection to line
+            let ridequery = (sprintf "INSERT INTO [retdbim].[dbo].[Rides] VALUES ('%s', '%i', '%i');" ((d + startTime)  |> dToString)) t.line_id t.direction
+            //time, tripid, platformid
+            let stopquery =  (t.stops |> List.map (fun s -> (sprintf @"INSERT INTO [retdbim].[dbo].[RideStops] VALUES ('%s', @lastTripID, (SELECT TOP 1 [id] FROM [retdbim].[dbo].[Platforms] WHERE [code] = '%s'));" ((d + s.arrival) |> dToString) s.id)) |> List.fold (+) "" )
             (ridequery + getScopeID + stopquery)
         ) |> List.fold (+) "")
     "BEGIN TRANSACTION t\n"+ sql+"\nCOMMIT TRANSACTION t"

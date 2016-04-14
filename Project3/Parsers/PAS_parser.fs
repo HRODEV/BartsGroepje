@@ -63,7 +63,7 @@ let private parseStop (s: string) =
 let private parseTripInfo (s: string) (t: trip) =
     { t with
         transport_type  =   s.Substring(1,1);
-        line_id         =   s.Substring(10,1) |> int;
+        line_id         =   (s.Substring(10,3) |> int) - 5;
         direction       =   s.Substring(14,1) |> int;
         trip_id         =   s.Substring(16,5) |> int;
     }
