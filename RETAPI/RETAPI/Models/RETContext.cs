@@ -71,6 +71,7 @@ namespace RETAPI.Models
         [ForeignKey("Line")]
         public int LineId { get; set; }
         public Line Line { get; set; }
+        public int Direction { get; set; }
         public virtual ICollection<RideStop> RideStops { get; set; }
     }
     public class RideStop
