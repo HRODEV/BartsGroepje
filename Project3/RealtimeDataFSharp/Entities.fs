@@ -19,6 +19,25 @@ type Font = {
 }
 
 
+type GameSpeed = {
+    Speed : int
+} with
+    member x.GetSpeed = x.Speed
+    static member Zero =
+        {  
+            Speed = 1
+        }
+    static member Update(lastGameSpeed : GameSpeed) =
+        let currentKeyboard = Keyboard.GetState()
+        {
+            Speed = if currentKeyboard.IsKeyDown(Keys.D1) then 1 
+                    else if currentKeyboard.IsKeyDown(Keys.D2) then 50 
+                    else if currentKeyboard.IsKeyDown(Keys.D3) then 250 
+                    else if currentKeyboard.IsKeyDown(Keys.D4) then 1000 
+                    else if currentKeyboard.IsKeyDown(Keys.P) then 0 
+                    else lastGameSpeed.GetSpeed
+        }
+
 type RideStop = {
     Name : string
     Arrival : DateTime
@@ -151,6 +170,7 @@ type GameState = {
     Fonts       : Map<String, Font>
     Rides       : rideData.Value list
     Time        : DateTime
+    GameSpeed   : GameSpeed
     CounterBox  : CounterBox
 } with
     static member Draw(gameState: GameState, spriteBatch: SpriteBatch) =
@@ -181,6 +201,7 @@ type GameState = {
             Fonts = Map.empty
             Rides = []
             Time = new DateTime()
+            GameSpeed = GameSpeed.Zero
             CounterBox = CounterBox.Create(new Vector2(1500.f, 950.f), new DateTime())
         }
 
@@ -189,6 +210,8 @@ type GameState = {
         let newMetros = gameState.Rides |> List.filter (fun m -> m.Date <= gameState.Time) |> List.map (fun r -> Metro.Create(A, r.RideStops |> Array.map(fun x -> RideStop.Create(x, scaler, 0)) |> List.ofArray, MetroProgram2()))
         let remainingRides = gameState.Rides |> List.filter (fun m -> m.Date > gameState.Time)
 
-        let updatedTime = gameState.Time + (new TimeSpan(0,0,0,0,dt.ElapsedGameTime.Milliseconds * 50))
+        let newGameSpeed = GameSpeed.Update(gameState.GameSpeed)
+
+        let updatedTime = gameState.Time + (new TimeSpan(0,0,0,0,dt.ElapsedGameTime.Milliseconds * newGameSpeed.GetSpeed))
         let UpdatedMetros = newMetros @ gameState.Metros |> List.filter (fun x -> x.Status <> Arrived) |> List.map (fun x -> Metro.Update updatedTime x)
-        { gameState with Metros = UpdatedMetros; Time = updatedTime; Rides = remainingRides; CounterBox = newCounterBox }
+        { gameState with Metros = UpdatedMetros; Time = updatedTime; Rides = remainingRides; CounterBox = newCounterBox; GameSpeed = newGameSpeed }
