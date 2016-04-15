@@ -8,6 +8,7 @@ open Coroutines
 open Entities
 open Utilities
 open System
+open GameState
 
 
 
@@ -30,7 +31,7 @@ type TrainSimulation() as this =
         graphics.PreferredBackBufferWidth <- (int) screenWidth;  // set this value to the desired width of your window
         graphics.PreferredBackBufferHeight <- (int) screenHeight;   // set this value to the desired height of your window
 
-        graphics.IsFullScreen <- true
+        graphics.IsFullScreen <- false
         graphics.ApplyChanges();
         x.IsMouseVisible <- true;
 
@@ -51,9 +52,7 @@ type TrainSimulation() as this =
             Map.empty.
                 Add("font1", {Image = (spriteLoader "Font.png" this.GraphicsDevice); Data = FontLoader.Load("Font.fnt")})
 
-        gameState <- {GameState.Create(scaler) with Textures = textures; Fonts = fonts}
-        gameState <- {gameState with Metros = [Metro.Create(A, gameState.Rides.Head.RideStops |> Array.map(fun x -> RideStop.Create(x, scaler, 0)) |> List.ofArray, MetroProgram2())]
-        }
+        gameState <- {GameState.Create(scaler, Fetcher()) with Textures = textures; Fonts = fonts}
         ()
  
     override this.Update (gameTime) =

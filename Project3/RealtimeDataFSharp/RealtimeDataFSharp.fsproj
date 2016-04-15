@@ -60,6 +60,7 @@
     <Compile Include="Coroutines.fs" />
     <Compile Include="Utilities.fs" />
     <Compile Include="Entities.fs" />
+    <Compile Include="GameState.fs" />
     <Compile Include="Game.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
