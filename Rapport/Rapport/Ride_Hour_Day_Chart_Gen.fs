@@ -26,6 +26,8 @@ let GetChart =
     let chart = Chart.Combine(data.Rows 
                                 |> Seq.sortBy(fun row -> (row.Day_Of_Week+6)%8)
                                 |> Seq.groupBy(fun row -> row.Day_Of_Week )
-                                |> Seq.map (fun (day, rows) -> Chart.Line(rows |> Seq.sortBy(fun row -> (row.Hour+24) % 27) |> Seq.map (fun row -> (sprintf "%i:00" row.Hour), row.CountRides), (GetDayOfWeek day)))).WithLegend(true)
+                                |> Seq.map (fun (day, rows) -> Chart.Line(rows 
+                                    |> Seq.sortBy(fun row -> (row.Hour+24) % 27) 
+                                    |> Seq.map (fun row -> (sprintf "%i:00" row.Hour), row.CountRides), (GetDayOfWeek day)))).WithLegend(true)
 
     (chart, "Ride_Hour_Day")

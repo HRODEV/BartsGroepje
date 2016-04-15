@@ -3,4 +3,5 @@
 #load "load-references-debug.fsx"
 #load "../AssemblyInfo.fs"
       "../Ride_Hour_Day_Chart_Gen.fs"
+      "../Total_Ride_Lines_Chart_Gen.fs"
       "../Program.fs"
