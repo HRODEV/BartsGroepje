@@ -1,19 +1,12 @@
 ﻿open System
-open System.Data
-open System.Data.Common
-open FSharp.Data
-open FSharp.Charting
 open System.Windows.Forms
+open FSharp.Charting
+open Ride_Hour_Day_Chart_Gen
 
-// let file = System.IO.File.ReadAllText(@"System.Environment.CurrentDirectory\file.csv")
+let chart, chartName = Ride_Hour_Day_Chart_Gen.GetChart
 
-(*let data = CsvProvider<"/Data/CountStopsPerHourInDays.csv">.GetSample()
+let showChart = chart.ShowChart()
 
-data.Rows |> Seq.map (fun row -> row.)
-*)
+Chart.Save ("Data/"+chartName+".png") chart
 
-printfn "%A" data
-
-let chart = Chart.Line([ for x in 0 .. 10 -> x, x*x ]).ShowChart()
-
-Application.Run(chart)
+Application.Run(showChart)

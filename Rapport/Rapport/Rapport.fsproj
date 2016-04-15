@@ -55,15 +55,22 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Ride_Hour_Day_Chart_Gen.fs" />
     <Compile Include="Program.fs" />
+    <None Include="Script.fsx" />
     <None Include="App.config" />
     <Content Include="packages.config" />
-    <None Include="Data\CountStopsPerHourAndDayInDays.csv">
+    <None Include="Data\CountStopsPerHourAndDayIn90Days.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\CountStopsPerHourInDays.csv">
+    <None Include="Data\CountStopsPerHourIn90Days.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\CountRidesPerHourAndDayIn90Days.csv" />
+    <None Include="Data\CountRidesPerHourIn90Days.csv" />
+    <None Include="Charts\load-references-debug.fsx" />
+    <None Include="Scripts\load-project-debug.fsx" />
+    <None Include="Scripts\load-references-debug.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Charting">
