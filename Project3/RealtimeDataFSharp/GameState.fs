@@ -9,18 +9,6 @@ open Utilities
 open System
 open Entities
 
-let rec metroreadyfilter (x: rideData.Value list) (d: DateTime) (acc: rideData.Value list)=
-    match x with
-    | h :: t when h.Date <= d -> metroreadyfilter t d (h :: acc)
-    | h :: t -> List.rev acc
-    | _ -> List.rev acc
-
-let rec metroremainfilter (x: rideData.Value list) (d: DateTime) =
-    match x with
-    | h :: t when h.Date <= d -> metroremainfilter t d
-    | h :: t -> x
-    | _ -> x
-
 type GameState = {
     Metros      : Metro list
     Stations    : Station list
@@ -30,8 +18,9 @@ type GameState = {
     Time        : DateTime
     GameSpeed   : GameSpeed
     CounterBox  : CounterBox
-    Behaviour   : Coroutine<unit, GameState>
+    Behaviour   : Coroutine<unit, GameState> list
     Count       : int
+    dt          : GameTime
 } with
     static member Draw(gameState: GameState, spriteBatch: SpriteBatch) =
         let backgroundImage = gameState.Textures.["background"]
@@ -41,7 +30,7 @@ type GameState = {
         CounterBox.Draw(gameState.CounterBox, gameState.Fonts.["font1"], gameState.Textures.["metro"], spriteBatch)
         GameSpeed.Draw(gameState.GameSpeed, gameState.Textures.["metro"], spriteBatch)
 
-    static member Create(scaler: Vector2 -> Vector2, behaviour: Coroutine<unit, GameState>) =
+    static member Create(scaler: Vector2 -> Vector2, behaviour: Coroutine<unit, GameState> list) =
         let stationList =  (stationData.Load("http://145.24.222.212/v2/odata/Stations").Value |> Array.map (fun st -> Station.Create(st, scaler))) |> List.ofArray
         let rides = (rideData.Load("http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform&$top=20&$orderby=Date").Value) |> List.ofArray
 
@@ -62,44 +51,67 @@ type GameState = {
             Time = new DateTime()
             GameSpeed = GameSpeed.Zero
             CounterBox = CounterBox.Create(new Vector2(1500.f, 950.f), new DateTime())
-            Behaviour = fun s -> Done((), s)
+            Behaviour = []
             Count = 0
+            dt = new GameTime()
         }
 
     static member Update(gameState: GameState, dt: GameTime) =
-        let newCounterBox = CounterBox.Update(gameState.CounterBox, gameState.Time)
-        let newMetros = gameState.Rides |> fun r -> metroreadyfilter r gameState.Time [] |> List.map (fun r -> Metro.Create(A, r.RideStops, MetroProgram2()))
-        let remainingRides = gameState.Rides |> fun r -> metroremainfilter r gameState.Time
-        let newGameSpeed = GameSpeed.Update(gameState.GameSpeed)
-        let updatedTime = gameState.Time + (new TimeSpan(0,0,0,0,dt.ElapsedGameTime.Milliseconds * newGameSpeed.GetSpeed))
-        let UpdatedMetros = newMetros @ gameState.Metros |> List.filter (fun x -> x.Status <> Arrived) |> List.map (fun x -> Metro.Update updatedTime x)
-        let behaviour', gameState' = singlestep gameState.Behaviour {gameState with Rides = remainingRides}
-        printfn "%A" gameState'.Rides.Length
-
-        { gameState' with Metros = UpdatedMetros; Time = updatedTime; CounterBox = newCounterBox; GameSpeed = newGameSpeed; Behaviour = behaviour' }
+        gameState.Behaviour |>
+        List.fold (
+            fun (acc: GameState) x ->
+                let behaviour', state' = (singlestep x acc)
+                {state' with Behaviour = behaviour' :: state'.Behaviour}
+        ) {gameState with Behaviour = []; dt = dt;}
 
 // Metros
-let rec GetNextReadyRide : Coroutine<rideData.Value, GameState> =
+let GetNextReadyRides =
     fun (s: GameState) ->
-        match s.Rides with
-        | h :: t when h.Date < s.Time -> Done(h, {s with Rides = t})
-        | h :: t -> Wait(GetNextReadyRide, s)
-        | _ -> Wait(GetNextReadyRide, s)
+        let rec looper (x: rideData.Value list) acc =
+            match x with
+                | h :: t when h.Date <= s.Time -> looper t (h :: acc)
+                | h :: t -> List.rev acc
+                | _ -> List.rev acc
+        Done(looper s.Rides [], s)
 
-let StartReadyMetro (x: rideData.Value) : Coroutine<unit, GameState> =
+let CreateMetrosFromRides (rides: rideData.Value list)=
     fun (s: GameState) ->
-        Done((), {s with Metros = Metro.Create(A, x.RideStops, MetroProgram2()) :: s.Metros})
+        let rec looper (rides: rideData.Value list) =
+            match rides with
+            | h :: t    -> Metro.Create(A, h.RideStops, MetroProgram2()) :: (looper t)
+            | _         -> []
+        Done((), {s with Metros = (looper rides) @ s.Metros})
 
-let UpdateTime (dt: GameTime): Coroutine<unit, GameState> =
+let RemoveDepartedRides =
     fun (s: GameState) ->
+        let rec looper (rides: rideData.Value list) =
+            match rides with
+                | h :: t when h.Date <= s.Time -> looper t
+                | h :: t -> rides
+                | _ -> rides
+        Done((), {s with Rides = looper s.Rides})
+
+let UpdateTime =
+    fun (s: GameState) ->
+        let newCounterBox = CounterBox.Update(s.CounterBox, s.Time)
         let newGameSpeed = GameSpeed.Update(s.GameSpeed)
-        let elapsedTime = new TimeSpan(0, 0, 0, 0, dt.ElapsedGameTime.Milliseconds * newGameSpeed.GetSpeed)
-        Done((), {s with Time = s.Time + elapsedTime})
+        let elapsedTime = new TimeSpan(0, 0, 0, 0, s.dt.ElapsedGameTime.Milliseconds * newGameSpeed.GetSpeed)
+        Done((), {s with Time = s.Time + elapsedTime; GameSpeed = newGameSpeed; CounterBox = newCounterBox;})
 
 let UpdateMetros : Coroutine<unit, GameState> =
     fun (s: GameState) ->
         let metros = s.Metros |> List.filter (fun x -> x.Status <> Arrived) |> List.map (fun x -> Metro.Update s.Time x)
         Done((), {s with Metros = metros})
+
+let MainStateLogic() =
+    co {
+        do! UpdateTime
+        let! readyRides = GetNextReadyRides
+        do! CreateMetrosFromRides readyRides
+        do! RemoveDepartedRides
+        do! UpdateMetros
+        do! yield_
+    } |> repeat_
 
 // Async Fetching
 let ASyncDataRequest url =
@@ -134,7 +146,7 @@ let rec FetchRides url =
             return ()
     }
 
-let Fetcher() =
+let Fetcher () =
     co {
         let! state = getState
         let str = sprintf "http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform&$top=100&$orderby=Date&$skip=%i" state.Count

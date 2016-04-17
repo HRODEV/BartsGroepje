@@ -52,7 +52,7 @@ type TrainSimulation() as this =
             Map.empty.
                 Add("font1", {Image = (spriteLoader "Font.png" this.GraphicsDevice); Data = FontLoader.Load("Font.fnt")})
 
-        gameState <- {GameState.Create(scaler, Fetcher()) with Textures = textures; Fonts = fonts}
+        gameState <- {GameState.Create(scaler, [Fetcher(); MainStateLogic()]) with Textures = textures; Fonts = fonts}
         ()
  
     override this.Update (gameTime) =
