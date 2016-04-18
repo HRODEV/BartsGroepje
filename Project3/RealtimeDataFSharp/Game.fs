@@ -10,8 +10,6 @@ open Utilities
 open System
 open GameState
 
-
-
 let spriteLoader (path) graphics = 
     use imagePath = System.IO.File.OpenRead(path)
     let texture = Texture2D.FromStream(graphics, imagePath)
@@ -52,7 +50,7 @@ type TrainSimulation() as this =
             Map.empty.
                 Add("font1", {Image = (spriteLoader "Font.png" this.GraphicsDevice); Data = FontLoader.Load("Font.fnt")})
 
-        gameState <- {GameState.Create(scaler, [Fetcher(); MainStateLogic()]) with Textures = textures; Fonts = fonts}
+        gameState <- {GameState.Create(scaler, [StateFetchRideLogic(); MainStateLogic()]) with Textures = textures; Fonts = fonts}
         ()
  
     override this.Update (gameTime) =
@@ -63,4 +61,5 @@ type TrainSimulation() as this =
         do this.GraphicsDevice.Clear Color.CornflowerBlue
         spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
         GameState.Draw(gameState, spriteBatch)
+        DrawLine (new Vector2(0.0f,0.0f)) (new Vector2(100.0f,100.0f)) spriteBatch this.GraphicsDevice
         spriteBatch.End()

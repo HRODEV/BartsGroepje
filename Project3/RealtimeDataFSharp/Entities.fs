@@ -12,12 +12,10 @@ type Line = A | B | C | D | E
 type stationData = JsonProvider<"Samples/StationsAndPlatformsSample.json">
 type rideData = JsonProvider<"Samples/RidesAndRideStopsAndPlatformAndStation.json">
 
-
 type Font = {
     Image : Texture2D
     Data  : FontFile
 }
-
 
 type GameSpeed = {
     Speed : int

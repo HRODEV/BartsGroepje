@@ -9,6 +9,8 @@ open Utilities
 open System
 open Entities
 
+#REGION
+//GameState Type
 type GameState = {
     Metros      : Metro list
     Stations    : Station list
@@ -63,9 +65,11 @@ type GameState = {
                 let behaviour', state' = (singlestep x acc)
                 {state' with Behaviour = behaviour' :: state'.Behaviour}
         ) {gameState with Behaviour = []; dt = dt;}
+#ENDREGION 
 
-// Metros
-let GetNextReadyRides =
+#REGION
+//Metro creation coroutine
+let private GetNextReadyRides =
     fun (s: GameState) ->
         let rec looper (x: rideData.Value list) acc =
             match x with
@@ -74,7 +78,7 @@ let GetNextReadyRides =
                 | _ -> List.rev acc
         Done(looper s.Rides [], s)
 
-let CreateMetrosFromRides (rides: rideData.Value list)=
+let private CreateMetrosFromRides (rides: rideData.Value list)=
     fun (s: GameState) ->
         let rec looper (rides: rideData.Value list) =
             match rides with
@@ -82,7 +86,7 @@ let CreateMetrosFromRides (rides: rideData.Value list)=
             | _         -> []
         Done((), {s with Metros = (looper rides) @ s.Metros})
 
-let RemoveDepartedRides =
+let private RemoveDepartedRides =
     fun (s: GameState) ->
         let rec looper (rides: rideData.Value list) =
             match rides with
@@ -91,14 +95,14 @@ let RemoveDepartedRides =
                 | _ -> rides
         Done((), {s with Rides = looper s.Rides})
 
-let UpdateTime =
+let private UpdateTime =
     fun (s: GameState) ->
         let newCounterBox = CounterBox.Update(s.CounterBox, s.Time)
         let newGameSpeed = GameSpeed.Update(s.GameSpeed)
         let elapsedTime = new TimeSpan(0, 0, 0, 0, s.dt.ElapsedGameTime.Milliseconds * newGameSpeed.GetSpeed)
         Done((), {s with Time = s.Time + elapsedTime; GameSpeed = newGameSpeed; CounterBox = newCounterBox;})
 
-let UpdateMetros : Coroutine<unit, GameState> =
+let private UpdateMetros : Coroutine<unit, GameState> =
     fun (s: GameState) ->
         let metros = s.Metros |> List.filter (fun x -> x.Status <> Arrived) |> List.map (fun x -> Metro.Update s.Time x)
         Done((), {s with Metros = metros})
@@ -112,9 +116,11 @@ let MainStateLogic() =
         do! UpdateMetros
         do! yield_
     } |> repeat_
+#ENDREGION
 
-// Async Fetching
-let ASyncDataRequest url =
+#REGION
+// Async ride fetching from JSON API coroutine.
+let private ASyncDataRequest url =
     fun s ->
         let task = Async.StartAsTask (async {
             let! start = rideData.AsyncLoad(url)
@@ -122,33 +128,29 @@ let ASyncDataRequest url =
         })
         Done(task, s)
 
-let rec ASyncDataParse (task:Threading.Tasks.Task<rideData.Value[]>) =
+let rec private ASyncDataParse (task:Threading.Tasks.Task<rideData.Value[]>) =
     fun s ->
         match task.IsCompleted with
         | true  -> Done(task.Result, s)
         | false -> Wait(ASyncDataParse task, s)
 
-let rec LoadRides (rides: rideData.Value[]) =
+let rec private LoadRides (rides: rideData.Value[]) =
     fun (s: GameState) ->
         let ridelist = rides |> List.ofArray
         Done((), {s with Rides = List.append s.Rides ridelist; Count = s.Count + 20})
 
-let rec FetchRides url =
-    co {
-        let! (state: GameState) = getState
-        if state.Rides.Length > 400 then
-            do! yield_
-            return! (FetchRides url)
-        else
-            let! task = ASyncDataRequest url
-            let! rides = ASyncDataParse task
-            do! LoadRides rides
-            return ()
-    }
-
-let Fetcher () =
+let rec StateFetchRideLogic () =
     co {
         let! state = getState
         let str = sprintf "http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform&$top=100&$orderby=Date&$skip=%i" state.Count
-        do! FetchRides str
+        let! (state: GameState) = getState
+        if state.Rides.Length > 400 then
+            do! yield_
+            return! StateFetchRideLogic()
+        else
+            let! task = ASyncDataRequest str
+            let! rides = ASyncDataParse task
+            do! LoadRides rides
+            return ()
     } |> repeat_
+#ENDREGION
