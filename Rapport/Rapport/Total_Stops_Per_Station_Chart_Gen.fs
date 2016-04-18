@@ -19,7 +19,7 @@ let GetChart =
     let table = 
         data.Rows
         |> Seq.take 5
-        |> Seq.map (fun row -> sprintf "%s|%i \n" row.StationName row.Stops)
+        |> Seq.map (fun row -> sprintf "%s|%i \n" row.StationName (row.Stops/14/7))
         |> Seq.reduce (+)
 
     (chart, "TotalStopsStations")
