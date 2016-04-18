@@ -10,14 +10,18 @@ open System.Windows.Forms
 let GetChart =
     let data = CsvProvider<"Data/TotalRidesOfLinesPerDirection.csv">.GetSample()
 
-    let GetDayOfWeek iDay = 
+(*     
+    let GetDirection iDay = 
         ["Heen"; "Terug";] |> List.item (iDay-1)
 
-    let chart = Chart.Combine(data.Rows 
+   let chart = Chart.Combine(data.Rows 
                                 |> Seq.sortBy(fun row -> (row.Direction))
-                                |> Seq.groupBy(fun row -> row.Direction )
+                                |> Seq.groupBy(fun row -> row.Direction)
                                 |> Seq.map (fun (direction, rows) -> Chart.Column(rows 
                                     |> Seq.sortBy(fun row -> (row.LineName)) 
-                                    |> Seq.map (fun row -> (sprintf "%A" row.LineName), row.Count), (GetDayOfWeek direction)))).WithLegend(true)
-
-    (chart, "Total_Ride_Line")
+                                    |> Seq.map (fun row -> row.LineName, row.Count), (GetDirection direction)))).WithLegend(true)
+*)
+    let chart = Chart.Pie(data.Rows
+                |> Seq.groupBy(fun row -> row.LineName) 
+                |> Seq.map (fun (key, rows) -> (key, rows |> Seq.sumBy(fun row -> row.Count))), "", "").WithLegend(true)
+    (chart, "TotalRideLine")

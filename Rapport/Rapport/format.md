@@ -1,3 +1,10 @@
-#Bart's Groepje
-![Chart1]({|CHART1|})
-![Chart2]({|CHART2|})
+# Bart's Groepje
+
+### Alle ritten per dag per uur.
+![Chart1]({|RideHourDay|})
+
+### Aantal ritten per lijn.
+![Chart2]({|TotalRideLine|})
+
+### Totaal aantal stations per lijn.
+![Chart3]({|LineHasStations|})

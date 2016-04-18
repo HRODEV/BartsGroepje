@@ -54,35 +54,38 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
+    <None Include="format.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Ride_Hour_Day_Chart_Gen.fs" />
     <Compile Include="Total_Ride_Lines_Chart_Gen.fs" />
+    <Compile Include="Line_Has_Stations_Chart_Gen.fs" />
     <Compile Include="Program.fs" />
     <None Include="Script.fsx" />
     <None Include="App.config" />
     <Content Include="packages.config" />
     <None Include="Data\CountStopsPerHourAndDayIn90Days.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Data\CountStopsPerHourIn90Days.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Data\CountRidesPerHourAndDayIn90Days.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Data\CountRidesPerHourIn90Days.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Data\TotalRidesOfLinesPerDirection.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Charts\load-references-debug.fsx" />
+    <None Include="Data\stationsOnLine.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Scripts\load-project-debug.fsx" />
     <None Include="Scripts\load-references-debug.fsx" />
     <Content Include="FSharp.Markdown.Pdf.XML" />
-    <None Include="format.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CSharpFormat">

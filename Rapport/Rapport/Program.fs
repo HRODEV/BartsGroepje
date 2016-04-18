@@ -1,26 +1,30 @@
 ﻿open System
+open System.Drawing
 open System.Windows.Forms
 open FSharp.Charting
 open FSharp.Markdown
 open FSharp.Markdown.Pdf
 open Ride_Hour_Day_Chart_Gen
 open Total_Ride_Lines_Chart_Gen
+open Line_Has_Stations_Chart_Gen
 
-let chart, chartName = Ride_Hour_Day_Chart_Gen.GetChart 
-let chart', chartName' = Total_Ride_Lines_Chart_Gen.GetChart
+let Charts = [Ride_Hour_Day_Chart_Gen.GetChart; 
+              Total_Ride_Lines_Chart_Gen.GetChart; 
+              Line_Has_Stations_Chart_Gen.GetChart]
 
-let showChart = chart.ShowChart()
-let showChart' = chart'.ShowChart()
+let ProcessCharts (chart : ChartTypes.GenericChart, name : String) =
+    let ShowChart = chart.ShowChart()
+    ShowChart.Width <- 600
+    chart.CopyAsBitmap().Save("Data/"+name+".png")
+    ShowChart
 
-Chart.Save ("Data/"+chartName+".png") chart
-Chart.Save ("Data/"+chartName'+".png") chart'
+let processed = Charts
+                |> List.map(fun (chart, name) -> ProcessCharts(chart, name))
 
 let generateRapport() =
-    let file = System.IO.File.ReadAllText(@"format.md")
-    let file = file.Replace("{|CHART1|}", ("Data/"+chartName+".png")).Replace("{|CHART2|}", ("Data/"+chartName'+".png"))
-
-    Markdown.TransformPdf(file, "Rapport_Barts_Groepje.pdf")
+    let newFile = Charts 
+                  |> List.fold (fun (acc:string) (_, name) -> acc.Replace((sprintf "{|%s|}" name), (sprintf "Data/%s.png" name))) (System.IO.File.ReadAllText(@"format.md"))
+    Markdown.TransformPdf(newFile, "Rapport_Barts_Groepje.pdf")
 
 generateRapport()
-showChart' |> ignore
-Application.Run(showChart')
+Application.Run(processed.Head)
