@@ -9,6 +9,7 @@ open Entities
 open Utilities
 open System
 open GameState
+open SnakeDiagram
 
 let spriteLoader (path) graphics = 
     use imagePath = System.IO.File.OpenRead(path)
@@ -24,6 +25,7 @@ type TrainSimulation() as this =
     let mutable spriteBatch = Unchecked.defaultof<SpriteBatch>
     let mutable texture = Unchecked.defaultof<Texture2D>
     let mutable gameState = GameState.Zero()
+    let mutable snakeDiagram = SnakeDiagram.Create (new Rectangle(0,0,100,50)) (new Vector2(0.1f, 0.0f))
 
     override x.Initialize() =
         graphics.PreferredBackBufferWidth <- (int) screenWidth;  // set this value to the desired width of your window
@@ -44,7 +46,8 @@ type TrainSimulation() as this =
             Map.empty.
                 Add("background", spriteLoader "Rotterdam.png" this.GraphicsDevice).
                 Add("station", spriteLoader "metroicon.png" this.GraphicsDevice).
-                Add("metro", metrotexture)
+                Add("metro", metrotexture).
+                Add("line", metrotexture)
 
         let fonts = 
             Map.empty.
@@ -55,11 +58,16 @@ type TrainSimulation() as this =
  
     override this.Update (gameTime) =
         gameState <- GameState.Update(gameState, gameTime)
+        snakeDiagram <- SnakeDiagram.AddPoint snakeDiagram (float32 gameState.Metros.Length)
+        snakeDiagram <- SnakeDiagram.Update snakeDiagram gameState.GameSpeed.Speed
         ()
         
     override this.Draw (gameTime) =
+        let mutable metrotexture = new Texture2D(this.GraphicsDevice, 1, 1)
+        metrotexture.SetData([| Color.White |])
+
         do this.GraphicsDevice.Clear Color.CornflowerBlue
         spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
         GameState.Draw(gameState, spriteBatch)
-        DrawLine (new Vector2(0.0f,0.0f)) (new Vector2(100.0f,100.0f)) spriteBatch this.GraphicsDevice
+        snakeDiagram.Draw spriteBatch metrotexture
         spriteBatch.End()

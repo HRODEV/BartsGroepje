@@ -79,7 +79,6 @@ type TrainStatus =
     | Moving of TimeSpan
     | Arrived
 
-
 type CounterBox = {
     Position : Vector2
     Time : DateTime
@@ -92,7 +91,7 @@ type CounterBox = {
     static member Draw(box: CounterBox, font: Font, texture: Texture2D, spriteBatch: SpriteBatch) = 
         spriteBatch.Draw(texture, new Rectangle((int)box.Position.X, (int)box.Position.Y, 385, 125), Color.Black)
         let fr = new FontRenderer(font.Data, font.Image)
-        fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 15, box.Time.DayOfWeek.ToString())
+        //fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 15, box.Time.DayOfWeek.ToString())
         fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 65, box.Time.ToString())
         
     static member Update(box: CounterBox, newTime : DateTime) = 
@@ -100,7 +99,6 @@ type CounterBox = {
             Position = box.Position
             Time = newTime
         }
-
 
 type Metro = {
     Line : Line

@@ -26,11 +26,13 @@ type GameState = {
 } with
     static member Draw(gameState: GameState, spriteBatch: SpriteBatch) =
         let backgroundImage = gameState.Textures.["background"]
+        let fr = new FontRenderer(gameState.Fonts.["font1"].Data, gameState.Fonts.["font1"].Image)
         spriteBatch.Draw(backgroundImage, new Rectangle(0, 0, backgroundImage.Width, backgroundImage.Height), Color.White)
         gameState.Stations |> List.iter(fun s -> s.Draw(gameState.Textures.["station"], spriteBatch))
         gameState.Metros |> List.iter(fun m -> m.Draw(gameState.Textures.["metro"], spriteBatch))
         CounterBox.Draw(gameState.CounterBox, gameState.Fonts.["font1"], gameState.Textures.["metro"], spriteBatch)
         GameSpeed.Draw(gameState.GameSpeed, gameState.Textures.["metro"], spriteBatch)
+        fr.DrawText(spriteBatch, 150, 350, gameState.Metros.Length.ToString())
 
     static member Create(scaler: Vector2 -> Vector2, behaviour: Coroutine<unit, GameState> list) =
         let stationList =  (stationData.Load("http://145.24.222.212/v2/odata/Stations").Value |> Array.map (fun st -> Station.Create(st, scaler))) |> List.ofArray
@@ -82,7 +84,8 @@ let private CreateMetrosFromRides (rides: rideData.Value list)=
     fun (s: GameState) ->
         let rec looper (rides: rideData.Value list) =
             match rides with
-            | h :: t    -> Metro.Create(A, h.RideStops, MetroProgram2()) :: (looper t)
+            | h :: t    ->
+                Metro.Create(A, h.RideStops, MetroProgram2()) :: (looper t)
             | _         -> []
         Done((), {s with Metros = (looper rides) @ s.Metros})
 
@@ -104,7 +107,7 @@ let private UpdateTime =
 
 let private UpdateMetros : Coroutine<unit, GameState> =
     fun (s: GameState) ->
-        let metros = s.Metros |> List.filter (fun x -> x.Status <> Arrived) |> List.map (fun x -> Metro.Update s.Time x)
+        let metros = s.Metros |> List.map (fun x -> Metro.Update s.Time x) |> List.filter (fun x -> x.Status <> Arrived)
         Done((), {s with Metros = metros})
 
 let MainStateLogic() =
@@ -137,7 +140,7 @@ let rec private ASyncDataParse (task:Threading.Tasks.Task<rideData.Value[]>) =
 let rec private LoadRides (rides: rideData.Value[]) =
     fun (s: GameState) ->
         let ridelist = rides |> List.ofArray
-        Done((), {s with Rides = List.append s.Rides ridelist; Count = s.Count + 20})
+        Done((), {s with Rides = List.append s.Rides ridelist; Count = s.Count + 100})
 
 let rec StateFetchRideLogic () =
     co {
