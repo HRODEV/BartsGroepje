@@ -30,6 +30,6 @@ let GetChart =
                                 |> Seq.map (fun (day, rows) -> Chart.Line(rows 
                                     (* Sort time to normal format *)
                                     |> Seq.sortBy(fun row -> (row.Hour+24) % 27) 
-                                    |> Seq.map (fun row -> (sprintf "%i:00" row.Hour), row.CountRides), (GetDayOfWeek day)))).WithLegend(true)
+                                    |> Seq.map (fun row -> (sprintf "%i:00" row.Hour), row.CountRides/14), (GetDayOfWeek day)))).WithLegend(true)
 
     (chart, "RideHourDay")

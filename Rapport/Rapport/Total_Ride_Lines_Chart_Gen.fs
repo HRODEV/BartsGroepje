@@ -24,4 +24,15 @@ let GetChart =
     let chart = Chart.Pie(data.Rows
                 |> Seq.groupBy(fun row -> row.LineName) 
                 |> Seq.map (fun (key, rows) -> (key, rows |> Seq.sumBy(fun row -> row.Count))), "", "").WithLegend(true)
+    
+
+    let total = data.Rows |> Seq.sumBy (fun row -> row.Count) |> float32
+
+    let table = 
+        data.Rows
+        |> Seq.groupBy(fun row -> row.LineName) 
+        |> Seq.map (fun (key, rows) -> (key, (rows |> Seq.sumBy(fun row -> row.Count) |> float32)/total * 100.f))
+        |> Seq.map (fun (line, percent) -> sprintf "%s|%f \n" line percent)
+        |> Seq.reduce (+)
+
     (chart, "TotalRideLine")
