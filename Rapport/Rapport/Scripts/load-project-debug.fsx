@@ -5,4 +5,6 @@
       "../Ride_Hour_Day_Chart_Gen.fs"
       "../Total_Ride_Lines_Chart_Gen.fs"
       "../Line_Has_Stations_Chart_Gen.fs"
+      "../Total_Stops_Per_Station_Chart_Gen.fs"
+      "../Total_Stops_Per_Station_Last5_Chart_Gen.fs"
       "../Program.fs"
