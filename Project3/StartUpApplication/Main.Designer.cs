@@ -33,7 +33,7 @@
             this.RideHourDayButton = new System.Windows.Forms.Button();
             this.Total_Ride_Lines_Chart_GenButton = new System.Windows.Forms.Button();
             this.StopsPerStationButton = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.StationsPerLineButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -88,21 +88,22 @@
             this.StopsPerStationButton.UseVisualStyleBackColor = true;
             this.StopsPerStationButton.Click += new System.EventHandler(this.StopsPerStationButton_Click);
             // 
-            // button4
+            // StationsPerLineButton
             // 
-            this.button4.Location = new System.Drawing.Point(450, 398);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(123, 23);
-            this.button4.TabIndex = 5;
-            this.button4.Text = "button4";
-            this.button4.UseVisualStyleBackColor = true;
+            this.StationsPerLineButton.Location = new System.Drawing.Point(450, 398);
+            this.StationsPerLineButton.Name = "StationsPerLineButton";
+            this.StationsPerLineButton.Size = new System.Drawing.Size(123, 23);
+            this.StationsPerLineButton.TabIndex = 5;
+            this.StationsPerLineButton.Text = "Stations per lijn";
+            this.StationsPerLineButton.UseVisualStyleBackColor = true;
+            this.StationsPerLineButton.Click += new System.EventHandler(this.StationsPerLineButton_Click);
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(655, 497);
-            this.Controls.Add(this.button4);
+            this.Controls.Add(this.StationsPerLineButton);
             this.Controls.Add(this.StopsPerStationButton);
             this.Controls.Add(this.Total_Ride_Lines_Chart_GenButton);
             this.Controls.Add(this.RideHourDayButton);
@@ -123,6 +124,6 @@
         private System.Windows.Forms.Button RideHourDayButton;
         private System.Windows.Forms.Button Total_Ride_Lines_Chart_GenButton;
         private System.Windows.Forms.Button StopsPerStationButton;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button StationsPerLineButton;
     }
 }

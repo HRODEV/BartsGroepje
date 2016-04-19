@@ -37,5 +37,10 @@ namespace StartUpApplication
             Total_Stops_Per_Station_Chart_Gen.GetChart();
             Total_Stops_Per_Station_Last5_Chart_Gen.GetChart();
         }
+
+        private void StationsPerLineButton_Click(object sender, EventArgs e)
+        {
+            Line_Has_Stations_Chart_Gen.GetChart();
+        }
     }
 }
