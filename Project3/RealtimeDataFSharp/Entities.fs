@@ -90,10 +90,10 @@ type CounterBox = {
             Time = time
         }
     static member Draw(box: CounterBox, font: Font, texture: Texture2D, spriteBatch: SpriteBatch) = 
-        spriteBatch.Draw(texture, new Rectangle((int)box.Position.X, (int)box.Position.Y, 385, 125), Color.Black)
+        spriteBatch.Draw(texture, new Rectangle((int)box.Position.X, (int)box.Position.Y, 490, 135), Color.Black)
         let fr = new FontRenderer(font.Data, font.Image)
-        fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 15, box.Time.ToString("dddd d MMMM", CultureInfo.CreateSpecificCulture("it-IT")))
-        fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 55, box.Time.ToString("HH:mm:ss", CultureInfo.CreateSpecificCulture("en-US")))
+        fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 15, box.Time.ToString("dddd d MMMM", CultureInfo.CreateSpecificCulture("en-US")))
+        fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 70, box.Time.ToString("HH:mm:ss", CultureInfo.CreateSpecificCulture("en-US")))
         
     static member Update(box: CounterBox, newTime : DateTime) = 
         {
