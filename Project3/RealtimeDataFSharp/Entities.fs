@@ -29,10 +29,10 @@ type GameSpeed = {
             Speed = 1
             Position = position
         }
-    static member Draw(lastGameSpeed : GameSpeed, pause: Texture2D, font: Font, spriteBatch: SpriteBatch) =
+    static member Draw(lastGameSpeed : GameSpeed, font: Font, spriteBatch: SpriteBatch) =
         let fr = new FontRenderer(font.Data, font.Image)
         match lastGameSpeed.GetSpeed with
-        | 0 -> spriteBatch.Draw(pause, new Rectangle((int)lastGameSpeed.Position.X, (int)lastGameSpeed.Position.Y, 25, 25), Color.Yellow)
+        | 0 ->  fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, "PAUSED")
         | 1 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
         | 50 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
         | 250 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))

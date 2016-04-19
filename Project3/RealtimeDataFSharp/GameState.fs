@@ -32,7 +32,7 @@ type GameState = {
         gameState.Stations |> List.iter(fun s -> s.Draw(gameState.Textures.["station"], spriteBatch))
         gameState.Metros |> List.iter(fun m -> m.Draw(gameState.Textures.["metro"], spriteBatch))
         CounterBox.Draw(gameState.CounterBox, gameState.Fonts.["Timer"], gameState.Textures.["plain"], spriteBatch)
-        GameSpeed.Draw(gameState.GameSpeed, gameState.Textures.["pause"], gameState.Fonts.["Timer"], spriteBatch)
+        GameSpeed.Draw(gameState.GameSpeed, gameState.Fonts.["Timer"], spriteBatch)
         gameState.infobox.Draw spriteBatch 0 0
 
     static member Create(scaler: Vector2 -> Vector2, behaviour: Coroutine<unit, GameState> list, textures: Map<string, Texture2D>) =
@@ -59,7 +59,7 @@ type GameState = {
             GameSpeed = GameSpeed.Create(new Vector2(1475.0f, 985.f))
             CounterBox = CounterBox.Create(new Vector2(1200.f, 900.f), new DateTime())
             Behaviour = []
-            Count = 0
+            Count = 20
             dt = new GameTime()
             infobox = InfoBox.Zero()
         }
@@ -151,12 +151,10 @@ let rec StateFetchRideLogic () =
         let! state = getState
         if state.Rides.Length > 400 then
             do! yield_
-            return ()
         else
             let str = sprintf "http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform&$top=100&$orderby=Date&$skip=%i" state.Count
             let! task = ASyncDataRequest str
             let! rides = ASyncDataParse task
             do! LoadRides rides
-            return ()
     } |> repeat_
 #ENDREGION
