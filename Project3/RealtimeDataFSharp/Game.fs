@@ -39,15 +39,18 @@ type TrainSimulation() as this =
 
     override this.LoadContent() =
         do spriteBatch <- new SpriteBatch(this.GraphicsDevice)
-        let mutable metrotexture = new Texture2D(this.GraphicsDevice, 1, 1)
-        metrotexture.SetData([| Color.White |])
+        let mutable plainTexture = new Texture2D(this.GraphicsDevice, 1, 1)
+        plainTexture.SetData([| Color.White |])
        
         let textures : Map<String, Texture2D> =
             Map.empty.
+                Add("plain", plainTexture).
                 Add("background", spriteLoader "Rotterdam.png" this.GraphicsDevice).
                 Add("station", spriteLoader "metroicon.png" this.GraphicsDevice).
-                Add("metro", metrotexture).
-                Add("line", metrotexture)
+                Add("speed", spriteLoader "play.png" this.GraphicsDevice).
+                Add("pause", spriteLoader "pause.png" this.GraphicsDevice).
+                Add("metro", plainTexture).
+                Add("line", plainTexture)
 
         let fonts = 
             Map.empty.

@@ -20,26 +20,29 @@ type Font = {
 
 type GameSpeed = {
     Speed : int
+    Position : Vector2
 } with
     member x.GetSpeed = x.Speed
-    static member Zero =
+    static member Create position =
         {  
             Speed = 1
+            Position = position
         }
-    static member Draw(lastGameSpeed : GameSpeed, texture: Texture2D, spriteBatch: SpriteBatch) =
+    static member Draw(lastGameSpeed : GameSpeed, pause: Texture2D, font: Font, spriteBatch: SpriteBatch) =
+        let fr = new FontRenderer(font.Data, font.Image)
         match lastGameSpeed.GetSpeed with
-        | 0 -> spriteBatch.Draw(texture, new Rectangle(1500, 800, 25, 25), Color.Yellow)
-        | 1 -> spriteBatch.Draw(texture, new Rectangle(1500, 800, 25, 25), Color.Yellow)
-        | 50 -> for i in 0 .. 1 do spriteBatch.Draw(texture, new Rectangle(1500 + i * 65, 800, 25, 25), Color.Yellow)
-        | 250 -> for i in 0 .. 2 do spriteBatch.Draw(texture, new Rectangle(1500 + i * 65, 800, 25, 25), Color.Yellow)
-        | 1000 -> for i in 0 .. 3 do spriteBatch.Draw(texture, new Rectangle(1500 + i * 65, 800, 25, 25), Color.Yellow)
+        | 0 -> spriteBatch.Draw(pause, new Rectangle((int)lastGameSpeed.Position.X, (int)lastGameSpeed.Position.Y, 25, 25), Color.Yellow)
+        | 1 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
+        | 50 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
+        | 250 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
+        | 1000 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
         | _ -> ()
 
         
 
     static member Update(lastGameSpeed : GameSpeed) =
         let currentKeyboard = Keyboard.GetState()
-        {
+        { lastGameSpeed with
             Speed = if currentKeyboard.IsKeyDown(Keys.D1) then 1 
                     else if currentKeyboard.IsKeyDown(Keys.D2) then 50 
                     else if currentKeyboard.IsKeyDown(Keys.D3) then 250 
@@ -90,10 +93,10 @@ type CounterBox = {
             Time = time
         }
     static member Draw(box: CounterBox, font: Font, texture: Texture2D, spriteBatch: SpriteBatch) = 
-        spriteBatch.Draw(texture, new Rectangle((int)box.Position.X, (int)box.Position.Y, 490, 135), Color.Black)
+        spriteBatch.Draw(texture, new Rectangle((int)box.Position.X, (int)box.Position.Y, 700, 135), Color.Black)
         let fr = new FontRenderer(font.Data, font.Image)
         fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 15, box.Time.ToString("dddd d MMMM", CultureInfo.CreateSpecificCulture("en-US")))
-        fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 70, box.Time.ToString("HH:mm:ss", CultureInfo.CreateSpecificCulture("en-US")))
+        fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 80, box.Time.ToString("HH:mm:ss", CultureInfo.CreateSpecificCulture("en-US")))
         
     static member Update(box: CounterBox, newTime : DateTime) = 
         {
