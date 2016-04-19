@@ -153,7 +153,7 @@ let rec StateFetchRideLogic () =
         let! (state: GameState) = getState
         if state.Rides.Length > 400 then
             do! yield_
-            return! StateFetchRideLogic()
+            return ()
         else
             let! task = ASyncDataRequest str
             let! rides = ASyncDataParse task
