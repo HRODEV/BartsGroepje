@@ -32,4 +32,6 @@ let processed = Charts
 
 generateRapport()
 *)
-Application.Run(processed.Head)
+//Application.Run(processed.Head)
+
+System.Diagnostics.Process.Start(System.Environment.CurrentDirectory+"/rapport.html") |> ignore

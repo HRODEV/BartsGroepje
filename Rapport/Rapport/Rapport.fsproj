@@ -91,6 +91,9 @@
     <None Include="Scripts\load-project-debug.fsx" />
     <None Include="Scripts\load-references-debug.fsx" />
     <Content Include="FSharp.Markdown.Pdf.XML" />
+    <None Include="rapport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CSharpFormat">
