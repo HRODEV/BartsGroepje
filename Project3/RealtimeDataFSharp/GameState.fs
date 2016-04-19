@@ -30,7 +30,7 @@ type GameState = {
         spriteBatch.Draw(backgroundImage, new Rectangle(0, 0, backgroundImage.Width, backgroundImage.Height), Color.White)
         gameState.Stations |> List.iter(fun s -> s.Draw(gameState.Textures.["station"], spriteBatch))
         gameState.Metros |> List.iter(fun m -> m.Draw(gameState.Textures.["metro"], spriteBatch))
-        CounterBox.Draw(gameState.CounterBox, gameState.Fonts.["Arial"], gameState.Textures.["metro"], spriteBatch)
+        CounterBox.Draw(gameState.CounterBox, gameState.Fonts.["Timer"], gameState.Textures.["metro"], spriteBatch)
         GameSpeed.Draw(gameState.GameSpeed, gameState.Textures.["metro"], spriteBatch)
         fr.DrawText(spriteBatch, 150, 350, gameState.Metros.Length.ToString())
 
@@ -54,7 +54,7 @@ type GameState = {
             Rides = []
             Time = new DateTime()
             GameSpeed = GameSpeed.Zero
-            CounterBox = CounterBox.Create(new Vector2(1500.f, 950.f), new DateTime())
+            CounterBox = CounterBox.Create(new Vector2(1400.f, 935.f), new DateTime())
             Behaviour = []
             Count = 0
             dt = new GameTime()
