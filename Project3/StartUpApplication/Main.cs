@@ -21,5 +21,10 @@ namespace StartUpApplication
         {
             System.Diagnostics.Process.Start(System.Environment.CurrentDirectory + "/RealtimeDataFSharp.exe");
         }
+
+        private void RideHourDayButton_Click(object sender, EventArgs e)
+        {
+            Ride_Hour_Day_Chart_Gen.GetChart();
+        }
     }
 }

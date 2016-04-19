@@ -8,10 +8,11 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>RealtimeDataFSharp</RootNamespace>
     <AssemblyName>RealtimeDataFSharp</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
     <Name>RealtimeDataFSharp</Name>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -96,7 +97,8 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Data">
-      <HintPath>..\packages\FSharp.Data.2.3.0-beta2\lib\net40\FSharp.Data.dll</HintPath>
+      <HintPath>..\packages\FSharp.Data.2.2.5\lib\net40\FSharp.Data.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />

@@ -30,7 +30,7 @@
         {
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.startSimulationButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.RideHourDayButton = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
@@ -58,14 +58,15 @@
             this.startSimulationButton.UseVisualStyleBackColor = true;
             this.startSimulationButton.Click += new System.EventHandler(this.startSimulationButton_Click);
             // 
-            // button1
+            // RideHourDayButton
             // 
-            this.button1.Location = new System.Drawing.Point(77, 398);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
+            this.RideHourDayButton.Location = new System.Drawing.Point(36, 398);
+            this.RideHourDayButton.Name = "RideHourDayButton";
+            this.RideHourDayButton.Size = new System.Drawing.Size(116, 23);
+            this.RideHourDayButton.TabIndex = 2;
+            this.RideHourDayButton.Text = "ritten per uur en dag";
+            this.RideHourDayButton.UseVisualStyleBackColor = true;
+            this.RideHourDayButton.Click += new System.EventHandler(this.RideHourDayButton_Click);
             // 
             // button2
             // 
@@ -102,7 +103,7 @@
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.RideHourDayButton);
             this.Controls.Add(this.startSimulationButton);
             this.Controls.Add(this.pictureBox1);
             this.Name = "Main";
@@ -117,7 +118,7 @@
 
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button startSimulationButton;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button RideHourDayButton;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;

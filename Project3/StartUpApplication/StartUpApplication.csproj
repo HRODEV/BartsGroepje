@@ -33,8 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework, Version=3.5.1.1679, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.5.1.1679\lib\net40\MonoGame.Framework.dll</HintPath>
+    <Reference Include="FSharp.Charting, Version=0.90.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FSharp.Charting.0.90.13\lib\net40\FSharp.Charting.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
@@ -47,6 +47,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -94,6 +95,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Rapport\Rapport.fsproj">
+      <Project>{c49761f5-df35-4c79-ac26-8edefddb09dc}</Project>
+      <Name>Rapport</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RealtimeDataFSharp\RealtimeDataFSharp.fsproj">
       <Project>{ac72c6b6-b79e-4c42-91be-fcf3127bbca6}</Project>
       <Name>RealtimeDataFSharp</Name>
