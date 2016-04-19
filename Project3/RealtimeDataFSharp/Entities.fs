@@ -29,11 +29,11 @@ type GameSpeed = {
         }
     static member Draw(lastGameSpeed : GameSpeed, texture: Texture2D, spriteBatch: SpriteBatch) =
         match lastGameSpeed.GetSpeed with
-        | 0 -> spriteBatch.Draw(texture, new Rectangle(1500, 800, 25, 25), Color.Yellow)
-        | 1 -> spriteBatch.Draw(texture, new Rectangle(1500, 800, 25, 25), Color.Yellow)
-        | 50 -> for i in 0 .. 1 do spriteBatch.Draw(texture, new Rectangle(1500 + i * 65, 800, 25, 25), Color.Yellow)
-        | 250 -> for i in 0 .. 2 do spriteBatch.Draw(texture, new Rectangle(1500 + i * 65, 800, 25, 25), Color.Yellow)
-        | 1000 -> for i in 0 .. 3 do spriteBatch.Draw(texture, new Rectangle(1500 + i * 65, 800, 25, 25), Color.Yellow)
+        | 0 -> spriteBatch.Draw(texture, new Rectangle(1500, 800, 25, 25), Color.Blue)
+        | 1 -> spriteBatch.Draw(texture, new Rectangle(1500, 800, 25, 25), Color.Blue)
+        | 50 -> for i in 0 .. 1 do spriteBatch.Draw(texture, new Rectangle(1500 + i * 65, 800, 25, 25), Color.Blue)
+        | 250 -> for i in 0 .. 2 do spriteBatch.Draw(texture, new Rectangle(1500 + i * 65, 800, 25, 25), Color.Blue)
+        | 1000 -> for i in 0 .. 3 do spriteBatch.Draw(texture, new Rectangle(1500 + i * 65, 800, 25, 25), Color.Blue)
         | _ -> ()
 
         
@@ -198,7 +198,7 @@ type GameState = {
 
     static member Create(scaler: Vector2 -> Vector2) =
         let stationList =  (stationData.Load("http://145.24.222.212/v2/odata/Stations").Value |> Array.map (fun st -> Station.Create(st, scaler))) |> List.ofArray
-        let rides = (rideData.Load("http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform&$top=100&$orderby=Date").Value) |> List.ofArray
+        let rides = (rideData.Load("http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform&$top=1200&$orderby=Date").Value) |> List.ofArray
         { GameState.Zero() with
             Stations = stationList
             Rides = rides
