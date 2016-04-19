@@ -92,8 +92,8 @@ type CounterBox = {
     static member Draw(box: CounterBox, font: Font, texture: Texture2D, spriteBatch: SpriteBatch) = 
         spriteBatch.Draw(texture, new Rectangle((int)box.Position.X, (int)box.Position.Y, 385, 125), Color.Black)
         let fr = new FontRenderer(font.Data, font.Image)
-        fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 15, box.Time.DayOfWeek.ToString("G", CultureInfo.CreateSpecificCulture("en-US")))
-        fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 55, box.Time.ToString("G", CultureInfo.CreateSpecificCulture("en-US")))
+        fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 15, box.Time.ToString("dddd dd MMMM", CultureInfo.CreateSpecificCulture("it-IT")))
+        fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 55, box.Time.ToString("HH:mm:ss", CultureInfo.CreateSpecificCulture("en-US")))
         
     static member Update(box: CounterBox, newTime : DateTime) = 
         {
