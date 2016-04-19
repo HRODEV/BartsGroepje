@@ -30,7 +30,7 @@ type GameState = {
         spriteBatch.Draw(backgroundImage, new Rectangle(0, 0, backgroundImage.Width, backgroundImage.Height), Color.White)
         gameState.Stations |> List.iter(fun s -> s.Draw(gameState.Textures.["station"], spriteBatch))
         gameState.Metros |> List.iter(fun m -> m.Draw(gameState.Textures.["metro"], spriteBatch))
-        CounterBox.Draw(gameState.CounterBox, gameState.Fonts.["font1"], gameState.Textures.["metro"], spriteBatch)
+        CounterBox.Draw(gameState.CounterBox, gameState.Fonts.["Arial"], gameState.Textures.["metro"], spriteBatch)
         GameSpeed.Draw(gameState.GameSpeed, gameState.Textures.["metro"], spriteBatch)
         fr.DrawText(spriteBatch, 150, 350, gameState.Metros.Length.ToString())
 

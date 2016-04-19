@@ -51,7 +51,8 @@ type TrainSimulation() as this =
 
         let fonts = 
             Map.empty.
-                Add("font1", {Image = (spriteLoader "Font.png" this.GraphicsDevice); Data = FontLoader.Load("Font.fnt")})
+                Add("font1", {Image = (spriteLoader "Font.png" this.GraphicsDevice); Data = FontLoader.Load("Font.fnt")}).
+                Add("Arial", {Image = (spriteLoader "Arial_0.png" this.GraphicsDevice); Data = FontLoader.Load("Arial.fnt")})
 
         gameState <- {GameState.Create(scaler, [StateFetchRideLogic(); MainStateLogic()]) with Textures = textures; Fonts = fonts}
         ()

@@ -79,6 +79,8 @@
     <None Include="Font.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Arial.fnt" />
+    <None Include="Arial_0.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Data">
