@@ -7,7 +7,7 @@ open FSharp.Data
 open FSharp.Charting
 open System.Windows.Forms
 
-let GetChart =
+let GetChart() =
     let data = CsvProvider<"Data/TotalStopsPerStation.csv">.GetSample()
 
     let chart = Chart.Column(data.Rows
@@ -22,4 +22,4 @@ let GetChart =
         |> Seq.map (fun row -> sprintf "%s|%i \n" row.StationName (row.Stops/14/7))
         |> Seq.reduce (+)
 
-    (chart, "TotalStopsStations")
+    chart.ShowChart()

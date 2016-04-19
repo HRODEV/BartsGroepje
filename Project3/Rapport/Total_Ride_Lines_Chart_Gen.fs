@@ -7,7 +7,7 @@ open FSharp.Data
 open FSharp.Charting
 open System.Windows.Forms
 
-let GetChart =
+let GetChart() =
     let data = CsvProvider<"Data/TotalRidesOfLinesPerDirection.csv">.GetSample()
 
 (*     
@@ -35,4 +35,4 @@ let GetChart =
         |> Seq.map (fun (line, percent) -> sprintf "%s|%f \n" line percent)
         |> Seq.reduce (+)
 
-    (chart, "TotalRideLine")
+    chart.ShowChart()
