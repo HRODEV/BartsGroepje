@@ -8,8 +8,8 @@ open Coroutines
 open Entities
 open Utilities
 open System
-
-
+open GameState
+open SnakeDiagram
 
 let spriteLoader (path) graphics = 
     use imagePath = System.IO.File.OpenRead(path)
@@ -25,12 +25,13 @@ type TrainSimulation() as this =
     let mutable spriteBatch = Unchecked.defaultof<SpriteBatch>
     let mutable texture = Unchecked.defaultof<Texture2D>
     let mutable gameState = GameState.Zero()
+    let mutable snakeDiagram = SnakeDiagram.Create (new Rectangle(0,0,100,50)) (new Vector2(0.1f, 0.0f))
 
     override x.Initialize() =
         graphics.PreferredBackBufferWidth <- (int) screenWidth;  // set this value to the desired width of your window
         graphics.PreferredBackBufferHeight <- (int) screenHeight;   // set this value to the desired height of your window
 
-        graphics.IsFullScreen <- true
+        graphics.IsFullScreen <- false
         graphics.ApplyChanges();
         x.IsMouseVisible <- true;
 
@@ -45,23 +46,28 @@ type TrainSimulation() as this =
             Map.empty.
                 Add("background", spriteLoader "Rotterdam.png" this.GraphicsDevice).
                 Add("station", spriteLoader "metroicon.png" this.GraphicsDevice).
-                Add("metro", metrotexture)
+                Add("metro", metrotexture).
+                Add("line", metrotexture)
 
         let fonts = 
             Map.empty.
                 Add("font1", {Image = (spriteLoader "Font.png" this.GraphicsDevice); Data = FontLoader.Load("Font.fnt")})
 
-        gameState <- {GameState.Create(scaler) with Textures = textures; Fonts = fonts}
-        gameState <- {gameState with Metros = [Metro.Create(A, gameState.Rides.Head.RideStops |> Array.map(fun x -> RideStop.Create(x, scaler, 0)) |> List.ofArray, MetroProgram2())]
-        }
+        gameState <- {GameState.Create(scaler, [StateFetchRideLogic(); MainStateLogic()]) with Textures = textures; Fonts = fonts}
         ()
  
     override this.Update (gameTime) =
         gameState <- GameState.Update(gameState, gameTime)
+        snakeDiagram <- SnakeDiagram.AddPoint snakeDiagram (float32 gameState.Metros.Length)
+        snakeDiagram <- SnakeDiagram.Update snakeDiagram gameState.GameSpeed.Speed
         ()
         
     override this.Draw (gameTime) =
+        let mutable metrotexture = new Texture2D(this.GraphicsDevice, 1, 1)
+        metrotexture.SetData([| Color.White |])
+
         do this.GraphicsDevice.Clear Color.CornflowerBlue
         spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
         GameState.Draw(gameState, spriteBatch)
+        snakeDiagram.Draw spriteBatch metrotexture
         spriteBatch.End()
