@@ -8,6 +8,7 @@ open FSharp.Data
 open Coroutines
 open Utilities
 open System
+open SnakeDiagram
 
 type Line = A | B | C | D | E
 type stationData = JsonProvider<"Samples/StationsAndPlatformsSample.json">
@@ -38,8 +39,6 @@ type GameSpeed = {
         | 1000 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
         | _ -> ()
 
-        
-
     static member Update(lastGameSpeed : GameSpeed) =
         let currentKeyboard = Keyboard.GetState()
         { lastGameSpeed with
@@ -49,6 +48,44 @@ type GameSpeed = {
                     else if currentKeyboard.IsKeyDown(Keys.D4) then 1000 
                     else if currentKeyboard.IsKeyDown(Keys.P) then 0 
                     else lastGameSpeed.GetSpeed
+        }
+
+type InfoBox =
+    {
+        rect    :   Rectangle
+        bg      :   Texture2D
+        graph   :   SnakeDiagram
+    } with
+    static member Zero() =
+        {
+            rect = new Rectangle(0,0,0,0)
+            bg = null
+            graph = SnakeDiagram.Create (new Rectangle(0,0,0,0)) Vector2.Zero null
+        }
+
+    static member Create (textures:  Map<String, Texture2D>) =
+        let bg = textures.["InfoBox"]
+        let box = new Rectangle(20,20,bg.Width, bg.Height)
+        {
+            rect = box
+            bg = bg
+            graph = SnakeDiagram.Create (new Rectangle(30,25,203,74)) (new Vector2(-0.1f, 0.0f)) textures.["metro"]
+        }
+    
+    member this.Draw (spriteBatch: SpriteBatch) (metro: int) (distance: int) =
+        spriteBatch.Draw(this.bg, this.rect, Color.White)
+        this.graph.Draw(spriteBatch)
+
+    static member Update (infoBox: InfoBox) (gs: GameSpeed) (point: float32) =
+        let infobox' = InfoBox.AddPoint infoBox point
+        let graph' = SnakeDiagram.Update infobox'.graph gs.GetSpeed
+        { infoBox with
+            graph = graph'
+        }
+
+    static member AddPoint (infobox: InfoBox) (point: float32) =
+        {
+            infobox with graph = SnakeDiagram.AddPoint infobox.graph point
         }
 
 type RideStop = {
@@ -117,6 +154,7 @@ type Metro = {
 
     member this.Draw(texture: Texture2D, spriteBatch: SpriteBatch) =
             spriteBatch.Draw(texture, new Rectangle((int)this.Position.X - 2, (int)this.Position.Y - 2, 6, 6), Color.Red)
+            ()
 
     static member Create (line: Line, rideStops: rideData.RideStop array, behaviour: DateTime -> Coroutine<Unit, Metro>) =
         let rideStops' = rideStops |> Array.map(fun x -> RideStop.Create(x, scaler, 0)) |> List.ofArray
