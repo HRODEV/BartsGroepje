@@ -11,7 +11,7 @@ open System
 open GameState
 open SnakeDiagram
 
-let spriteLoader (path) graphics = 
+let spriteLoader (path) graphics =
     use imagePath = System.IO.File.OpenRead(path)
     let texture = Texture2D.FromStream(graphics, imagePath)
     let textureData = Array.create<Color> (texture.Width * texture.Height) Color.Transparent
@@ -38,6 +38,7 @@ type TrainSimulation() as this =
         do base.Initialize()
 
     override this.LoadContent() =
+        System.IO.Directory.SetCurrentDirectory("Content")
         do spriteBatch <- new SpriteBatch(this.GraphicsDevice)
         let mutable plainTexture = new Texture2D(this.GraphicsDevice, 1, 1)
         plainTexture.SetData([| Color.White |])
