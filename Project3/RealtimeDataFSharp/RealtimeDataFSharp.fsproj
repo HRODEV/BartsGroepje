@@ -93,6 +93,7 @@
     <None Include="pause.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="infobox.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Data">
