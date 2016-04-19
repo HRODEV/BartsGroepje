@@ -90,9 +90,6 @@
     <None Include="Timer_0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="play.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="pause.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

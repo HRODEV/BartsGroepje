@@ -23,6 +23,7 @@ type GameState = {
     Behaviour   : Coroutine<unit, GameState> list
     Count       : int
     dt          : GameTime
+    infobox     : InfoBox
 } with
     static member Draw(gameState: GameState, spriteBatch: SpriteBatch) =
         let backgroundImage = gameState.Textures.["background"]
@@ -32,9 +33,9 @@ type GameState = {
         gameState.Metros |> List.iter(fun m -> m.Draw(gameState.Textures.["metro"], spriteBatch))
         CounterBox.Draw(gameState.CounterBox, gameState.Fonts.["Timer"], gameState.Textures.["plain"], spriteBatch)
         GameSpeed.Draw(gameState.GameSpeed, gameState.Textures.["pause"], gameState.Fonts.["Timer"], spriteBatch)
-        fr.DrawText(spriteBatch, 150, 350, gameState.Metros.Length.ToString())
+        gameState.infobox.Draw spriteBatch 0 0
 
-    static member Create(scaler: Vector2 -> Vector2, behaviour: Coroutine<unit, GameState> list) =
+    static member Create(scaler: Vector2 -> Vector2, behaviour: Coroutine<unit, GameState> list, textures: Map<string, Texture2D>) =
         let stationList =  (stationData.Load("http://145.24.222.212/v2/odata/Stations").Value |> Array.map (fun st -> Station.Create(st, scaler))) |> List.ofArray
         let rides = (rideData.Load("http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform&$top=20&$orderby=Date").Value) |> List.ofArray
 
@@ -43,6 +44,8 @@ type GameState = {
             Rides = rides
             Time = rides.Head.Date
             Behaviour = behaviour
+            infobox = InfoBox.Create(textures)
+            Textures = textures
         }
 
     static member Zero() =
@@ -58,6 +61,7 @@ type GameState = {
             Behaviour = []
             Count = 0
             dt = new GameTime()
+            infobox = InfoBox.Zero()
         }
 
     static member Update(gameState: GameState, dt: GameTime) =
@@ -66,7 +70,7 @@ type GameState = {
             fun (acc: GameState) x ->
                 let behaviour', state' = (singlestep x acc)
                 {state' with Behaviour = behaviour' :: state'.Behaviour}
-        ) {gameState with Behaviour = []; dt = dt;}
+        ) {gameState with Behaviour = []; dt = dt; infobox = InfoBox.Update gameState.infobox gameState.GameSpeed (float32 gameState.Metros.Length)}
 #ENDREGION 
 
 #REGION

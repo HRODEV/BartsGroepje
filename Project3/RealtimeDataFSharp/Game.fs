@@ -46,8 +46,8 @@ type TrainSimulation() as this =
             Map.empty.
                 Add("plain", plainTexture).
                 Add("background", spriteLoader "Rotterdam.png" this.GraphicsDevice).
+                Add("InfoBox", spriteLoader "infobox.png" this.GraphicsDevice).
                 Add("station", spriteLoader "metroicon.png" this.GraphicsDevice).
-                Add("speed", spriteLoader "play.png" this.GraphicsDevice).
                 Add("pause", spriteLoader "pause.png" this.GraphicsDevice).
                 Add("metro", plainTexture).
                 Add("line", plainTexture)
@@ -58,13 +58,11 @@ type TrainSimulation() as this =
                 Add("Arial", {Image = (spriteLoader "Arial_0.png" this.GraphicsDevice); Data = FontLoader.Load("Arial.fnt")}).
                 Add("Timer", {Image = (spriteLoader "Timer_0.png" this.GraphicsDevice); Data = FontLoader.Load("Timer.fnt")})
 
-        gameState <- {GameState.Create(scaler, [StateFetchRideLogic(); MainStateLogic()]) with Textures = textures; Fonts = fonts}
+        gameState <- {GameState.Create(scaler, [StateFetchRideLogic(); MainStateLogic()], textures) with Fonts = fonts}
         ()
  
     override this.Update (gameTime) =
         gameState <- GameState.Update(gameState, gameTime)
-        snakeDiagram <- SnakeDiagram.AddPoint snakeDiagram (float32 gameState.Metros.Length)
-        snakeDiagram <- SnakeDiagram.Update snakeDiagram gameState.GameSpeed.Speed
         ()
         
     override this.Draw (gameTime) =
@@ -74,5 +72,4 @@ type TrainSimulation() as this =
         do this.GraphicsDevice.Clear Color.CornflowerBlue
         spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
         GameState.Draw(gameState, spriteBatch)
-        snakeDiagram.Draw spriteBatch metrotexture
         spriteBatch.End()
