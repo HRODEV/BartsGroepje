@@ -149,12 +149,11 @@ let rec private LoadRides (rides: rideData.Value[]) =
 let rec StateFetchRideLogic () =
     co {
         let! state = getState
-        let str = sprintf "http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform&$top=100&$orderby=Date&$skip=%i" state.Count
-        let! (state: GameState) = getState
         if state.Rides.Length > 400 then
             do! yield_
             return ()
         else
+            let str = sprintf "http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform&$top=100&$orderby=Date&$skip=%i" state.Count
             let! task = ASyncDataRequest str
             let! rides = ASyncDataParse task
             do! LoadRides rides
