@@ -7,4 +7,5 @@
       "../Line_Has_Stations_Chart_Gen.fs"
       "../Total_Stops_Per_Station_Chart_Gen.fs"
       "../Total_Stops_Per_Station_Last5_Chart_Gen.fs"
-      "../RidesAllDays.fs"
+      "../Rides_All_Days_Chart_Gen.fs"
+      "../Generate_Pdf.fs"
