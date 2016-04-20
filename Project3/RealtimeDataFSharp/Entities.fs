@@ -32,13 +32,8 @@ type GameSpeed = {
         }
     static member Draw(lastGameSpeed : GameSpeed, font: Font, spriteBatch: SpriteBatch) =
         let fr = new FontRenderer(font.Data, font.Image)
-        match lastGameSpeed.GetSpeed with
-        | 0 ->  fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, "PAUSED")
-        | 1 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
-        | 50 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
-        | 250 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
-        | 1000 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
-        | _ -> ()
+        if lastGameSpeed.GetSpeed > 0 then fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
+        else fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, "PAUSED")
 
     static member Update(lastGameSpeed : GameSpeed) =
         let currentKeyboard = Keyboard.GetState()
