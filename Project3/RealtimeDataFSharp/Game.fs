@@ -42,7 +42,7 @@ type TrainSimulation() as this =
         do spriteBatch <- new SpriteBatch(this.GraphicsDevice)
         let mutable plainTexture = new Texture2D(this.GraphicsDevice, 1, 1)
         plainTexture.SetData([| Color.White |])
-       
+
         let textures : Map<String, Texture2D> =
             Map.empty.
                 Add("plain", plainTexture).
@@ -53,7 +53,7 @@ type TrainSimulation() as this =
                 Add("metro", plainTexture).
                 Add("line", plainTexture)
 
-        let fonts = 
+        let fonts =
             Map.empty.
                 Add("font1", {Image = (spriteLoader "Font.png" this.GraphicsDevice); Data = FontLoader.Load("Font.fnt")}).
                 Add("Arial", {Image = (spriteLoader "Arial_0.png" this.GraphicsDevice); Data = FontLoader.Load("Arial.fnt")}).
@@ -61,12 +61,10 @@ type TrainSimulation() as this =
                 Add("Futura", {Image = (spriteLoader "Futura25.png" this.GraphicsDevice); Data = FontLoader.Load("Futura25.fnt")})
 
         gameState <- {GameState.Create(scaler, [StateFetchRideLogic(); MainStateLogic()], textures) with Fonts = fonts}
-        ()
- 
+
     override this.Update (gameTime) =
         gameState <- GameState.Update(gameState, gameTime)
-        ()
-        
+
     override this.Draw (gameTime) =
         let mutable metrotexture = new Texture2D(this.GraphicsDevice, 1, 1)
         metrotexture.SetData([| Color.White |])

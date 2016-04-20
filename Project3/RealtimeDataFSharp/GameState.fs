@@ -71,7 +71,7 @@ type GameState = {
                 let behaviour', state' = (singlestep x acc)
                 {state' with Behaviour = behaviour' :: state'.Behaviour}
         ) {gameState with Behaviour = []; dt = dt; infobox = InfoBox.Update gameState.infobox gameState.GameSpeed (float32 gameState.Metros.Length)}
-#ENDREGION 
+#ENDREGION
 
 #REGION
 //Metro creation coroutine
@@ -89,7 +89,7 @@ let private CreateMetrosFromRides (rides: rideData.Value list)=
         let rec looper (rides: rideData.Value list) =
             match rides with
             | h :: t    ->
-                let line = match h.Line.Name with 
+                let line = match h.Line.Name with
                     | "A" -> A
                     | "B" -> B
                     | "C" -> C
