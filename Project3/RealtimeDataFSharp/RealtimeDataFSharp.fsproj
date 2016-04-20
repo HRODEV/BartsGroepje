@@ -92,6 +92,7 @@
     <Compile Include="Utilities.fs" />
     <Compile Include="SnakeDiagram.fs" />
     <Compile Include="Entities.fs" />
+    <Compile Include="HeatMap.fs" />
     <Compile Include="GameState.fs" />
     <Compile Include="Game.fs" />
     <Compile Include="Program.fs" />
