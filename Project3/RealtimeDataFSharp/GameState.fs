@@ -29,15 +29,15 @@ type GameState = {
         let backgroundImage = gameState.Textures.["background"]
         let fr = new FontRenderer(gameState.Fonts.["font1"].Data, gameState.Fonts.["font1"].Image)
         spriteBatch.Draw(backgroundImage, new Rectangle(0, 0, backgroundImage.Width, backgroundImage.Height), Color.White)
-        gameState.Stations |> List.iter(fun s -> s.Draw(gameState.Textures.["station"], spriteBatch))
         gameState.Metros |> List.iter(fun m -> m.Draw(gameState.Textures.["metro"], spriteBatch))
+        gameState.Stations |> List.iter(fun s -> s.Draw(gameState.Textures.["station"], spriteBatch))
         CounterBox.Draw(gameState.CounterBox, gameState.Fonts.["Timer"], gameState.Textures.["plain"], spriteBatch)
         GameSpeed.Draw(gameState.GameSpeed, gameState.Fonts.["Timer"], spriteBatch)
         gameState.infobox.Draw spriteBatch 0 0
 
     static member Create(scaler: Vector2 -> Vector2, behaviour: Coroutine<unit, GameState> list, textures: Map<string, Texture2D>) =
         let stationList =  (stationData.Load("http://145.24.222.212/v2/odata/Stations").Value |> Array.map (fun st -> Station.Create(st, scaler))) |> List.ofArray
-        let rides = (rideData.Load("http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform&$top=20&$orderby=Date").Value) |> List.ofArray
+        let rides = (rideData.Load("http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform,Line&$top=20&$orderby=Date").Value) |> List.ofArray
 
         { GameState.Zero() with
             Stations = stationList
@@ -89,7 +89,14 @@ let private CreateMetrosFromRides (rides: rideData.Value list)=
         let rec looper (rides: rideData.Value list) =
             match rides with
             | h :: t    ->
-                Metro.Create(A, h.RideStops, MetroProgram2()) :: (looper t)
+                let line = match h.Line.Name with 
+                    | "A" -> A
+                    | "B" -> B
+                    | "C" -> C
+                    | "D" -> D
+                    | "E" -> E
+                    | _ -> A
+                Metro.Create(line, h.RideStops, MetroProgram2()) :: (looper t)
             | _         -> []
         Done((), {s with Metros = (looper rides) @ s.Metros})
 
@@ -152,7 +159,7 @@ let rec StateFetchRideLogic () =
         if state.Rides.Length > 400 then
             do! yield_
         else
-            let str = sprintf "http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform&$top=100&$orderby=Date&$skip=%i" state.Count
+            let str = sprintf "http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform,Line&$top=100&$orderby=Date&$skip=%i" state.Count
             let! task = ASyncDataRequest str
             let! rides = ASyncDataParse task
             do! LoadRides rides

@@ -11,6 +11,7 @@ open System
 open SnakeDiagram
 
 type Line = A | B | C | D | E
+
 type stationData = JsonProvider<"Samples/StationsAndPlatformsSample.json">
 type rideData = JsonProvider<"Samples/RidesAndRideStopsAndPlatformAndStation.json">
 
@@ -153,7 +154,8 @@ type Metro = {
         metro'
 
     member this.Draw(texture: Texture2D, spriteBatch: SpriteBatch) =
-            spriteBatch.Draw(texture, new Rectangle((int)this.Position.X - 2, (int)this.Position.Y - 2, 6, 6), Color.Red)
+            let color = match this.Line with A -> Color.Green | B -> Color.Yellow | C -> Color.Red | D -> Color.LightBlue | E -> Color.Blue 
+            spriteBatch.Draw(texture, new Rectangle((int)this.Position.X - 5, (int)this.Position.Y - 5, 10, 10), color)
             ()
 
     static member Create (line: Line, rideStops: rideData.RideStop array, behaviour: DateTime -> Coroutine<Unit, Metro>) =

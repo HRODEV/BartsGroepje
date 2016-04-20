@@ -31,7 +31,7 @@ type TrainSimulation() as this =
         graphics.PreferredBackBufferWidth <- (int) screenWidth;  // set this value to the desired width of your window
         graphics.PreferredBackBufferHeight <- (int) screenHeight;   // set this value to the desired height of your window
 
-        graphics.IsFullScreen <- false
+        graphics.IsFullScreen <- true
         graphics.ApplyChanges();
         x.IsMouseVisible <- true;
 
