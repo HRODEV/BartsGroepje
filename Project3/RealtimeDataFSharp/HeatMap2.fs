@@ -12,6 +12,7 @@ type Cell =
         Width : float32
         Height : float32
         Power : float32
+        Bounds : Rectangle
     } with
     static member Create(pos : Vector2, w : float32, h : float32) =
         {
@@ -19,13 +20,14 @@ type Cell =
             Width = w
             Height = h
             Power = 0.0f
+            Bounds = new Rectangle((int)pos.X, (int)pos.Y, (int)w, (int)h);
         }
     static member Draw(cell : Cell, texture : Texture2D, spriteBatch : SpriteBatch) =
-        spriteBatch.Draw(texture, new Rectangle((int)cell.Position.X, (int)cell.Position.Y, (int)cell.Width, (int)cell.Height), Color.Red * cell.Power)
+        spriteBatch.Draw(texture, new Rectangle((int)cell.Position.X, (int)cell.Position.Y, (int)cell.Width, (int)cell.Height), new Color(255.0f * (cell.Power * 2.0f), 255.0f - (255.0f * cell.Power), 0.0f, 0.25f))
     static member Update(cell : Cell, metros : Metro list, fetchNew : Boolean) =
-        let cellBounds = new Rectangle((int)cell.Position.X, (int)cell.Position.Y, (int)cell.Width, (int)cell.Height);
-        let amountToAdd = if fetchNew then metros |> List.fold(fun i m -> if cellBounds.Intersects(new Rectangle((int)m.Position.X, (int)m.Position.Y, 20, 20)) then i + 0.025f else i) 0.0f else 0.0f
+        let amountToAdd = if fetchNew then metros |> List.fold(fun i m -> if cell.Bounds.Intersects(new Rectangle((int)m.Position.X, (int)m.Position.Y, 20, 20)) then i + 0.025f else i) 0.0f else 0.0f
         let newPower = if cell.Power > 0.0f then cell.Power - 0.005f else 0.0f
+        // Yellow when half, Red when full, Green when empty
         {cell with
             Power = if newPower < 0.0f then min (0.0f + amountToAdd) 1.0f else min (newPower + amountToAdd) 1.0f}
 

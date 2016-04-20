@@ -31,11 +31,11 @@ type GameState = {
         let backgroundImage = gameState.Textures.["background"]
         let fr = new FontRenderer(gameState.Fonts.["font1"].Data, gameState.Fonts.["font1"].Image)
         spriteBatch.Draw(backgroundImage, new Rectangle(0, 0, backgroundImage.Width, backgroundImage.Height), Color.White)
+        if gameState.HeatMap.Active then HeatMap.Draw(gameState.HeatMap, gameState.Textures.["plain"], spriteBatch) else ()
         gameState.Metros |> List.iter(fun m -> m.Draw(gameState.Textures.["metro"], spriteBatch))
         gameState.Stations |> List.iter(fun s -> s.Draw(gameState.Textures.["station"], spriteBatch))
         CounterBox.Draw(gameState.CounterBox, gameState.Fonts.["Timer"], gameState.Textures.["plain"], spriteBatch)
         GameSpeed.Draw(gameState.GameSpeed, gameState.Fonts.["Timer"], spriteBatch)
-        if gameState.HeatMap.Active then HeatMap.Draw(gameState.HeatMap, gameState.Textures.["plain"], spriteBatch) else ()
         gameState.infobox.Draw spriteBatch (gameState.Metros.Length) (gameState.Metros |> List.fold (fun a m -> Metro.CalculateDistance m gameState.Metros + a) 0 |> fun x -> if gameState.Metros.Length <> 0 then x / gameState.Metros.Length else 0) gameState.Fonts
 
     static member Create(scaler: Vector2 -> Vector2, behaviour: Coroutine<unit, GameState> list, textures: Map<string, Texture2D>) =
@@ -65,7 +65,7 @@ type GameState = {
             Count = 20
             dt = new GameTime()
             infobox = InfoBox.Zero()
-            HeatMap = HeatMap.Create(32, 32)
+            HeatMap = HeatMap.Create(50, 50)
         }
 
     static member Update(gameState: GameState, dt: GameTime) =
