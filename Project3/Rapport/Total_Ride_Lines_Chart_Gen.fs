@@ -23,7 +23,8 @@ let GetChart() =
 *)
     let chart = Chart.Pie(data.Rows
                 |> Seq.groupBy(fun row -> row.LineName) 
-                |> Seq.map (fun (key, rows) -> (key, rows |> Seq.sumBy(fun row -> row.Count))), "", "").WithLegend(true)
+                |> Seq.map (fun (key, rows) -> (key, rows |> Seq.sumBy(fun row -> row.Count))), "Aantal ritten per lijn", "").WithLegend(true).WithTitle("Aantal ritten per lijn", false)
+                
     
 
     let total = data.Rows |> Seq.sumBy (fun row -> row.Count) |> float32

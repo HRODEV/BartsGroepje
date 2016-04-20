@@ -29,10 +29,10 @@ type GameSpeed = {
             Speed = 1
             Position = position
         }
-    static member Draw(lastGameSpeed : GameSpeed, pause: Texture2D, font: Font, spriteBatch: SpriteBatch) =
+    static member Draw(lastGameSpeed : GameSpeed, font: Font, spriteBatch: SpriteBatch) =
         let fr = new FontRenderer(font.Data, font.Image)
         match lastGameSpeed.GetSpeed with
-        | 0 -> spriteBatch.Draw(pause, new Rectangle((int)lastGameSpeed.Position.X, (int)lastGameSpeed.Position.Y, 25, 25), Color.Yellow)
+        | 0 ->  fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, "PAUSED")
         | 1 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
         | 50 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
         | 250 -> fr.DrawText(spriteBatch, (int)lastGameSpeed.Position.X + 15, (int)lastGameSpeed.Position.Y - 5, String.Format("x{0}", lastGameSpeed.GetSpeed))
@@ -45,7 +45,8 @@ type GameSpeed = {
             Speed = if currentKeyboard.IsKeyDown(Keys.D1) then 1 
                     else if currentKeyboard.IsKeyDown(Keys.D2) then 50 
                     else if currentKeyboard.IsKeyDown(Keys.D3) then 250 
-                    else if currentKeyboard.IsKeyDown(Keys.D4) then 1000 
+                    else if currentKeyboard.IsKeyDown(Keys.D4) then 1000
+                    else if currentKeyboard.IsKeyDown(Keys.D5) then 5000
                     else if currentKeyboard.IsKeyDown(Keys.P) then 0 
                     else lastGameSpeed.GetSpeed
         }
@@ -72,9 +73,12 @@ type InfoBox =
             graph = SnakeDiagram.Create (new Rectangle(30,25,203,74)) (new Vector2(-0.1f, 0.0f)) textures.["metro"]
         }
     
-    member this.Draw (spriteBatch: SpriteBatch) (metro: int) (distance: int) =
-        spriteBatch.Draw(this.bg, this.rect, Color.White)
-        this.graph.Draw(spriteBatch)
+    member this.Draw (spriteBatch: SpriteBatch) (metro: int) (distance: int) (fonts: Map<string, Font>) =
+        let fr = new FontRenderer(fonts.["Futura"].Data, fonts.["Futura"].Image);
+        spriteBatch.Draw(this.bg, this.rect, Color.White);
+        this.graph.Draw(spriteBatch);
+        fr.DrawText(spriteBatch, this.rect.X + 10, this.rect.Y + 120, metro.ToString());
+        fr.DrawText(spriteBatch, this.rect.X + 10, this.rect.Y + 190, distance.ToString());
 
     static member Update (infoBox: InfoBox) (gs: GameSpeed) (point: float32) =
         let infobox' = InfoBox.AddPoint infoBox point
@@ -165,6 +169,9 @@ type Metro = {
             Status = Waiting (rideStops'.Head.Departure)
             Behaviour = behaviour;
         }
+
+    static member CalculateDistance (metro: Metro) (metros: Metro list) = metros |> List.fold (fun tdist m -> let dist = int (Vector2.Distance(metro.Position, m.Position)) in if dist < 1 then tdist else if tdist < dist then dist else tdist) 0
+
 
 let MetroProgram2() (dt : DateTime) : Coroutine<Unit, Metro> =
     let DriveMetro (time : TimeSpan) (dt : DateTime) : Coroutine<bool, Metro> = fun metro ->
