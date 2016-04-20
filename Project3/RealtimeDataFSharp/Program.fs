@@ -11,7 +11,7 @@ open System.Collections.Generic
 open Game
 
 [<EntryPoint>]
-let main argv = 
+let main argv =
     use g = new TrainSimulation()
     g.Run()
     0 // return an integer exit code

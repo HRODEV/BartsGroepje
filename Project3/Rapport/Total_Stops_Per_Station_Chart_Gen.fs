@@ -1,4 +1,4 @@
-﻿module Total_Stops_Per_Station_Chart_Gen 
+﻿module Total_Stops_Per_Station_Chart_Gen
 
 open System
 open System.Data
@@ -16,7 +16,7 @@ let GetChart() =
 
     //let total = data.Rows |> Seq.sumBy (fun row -> row.Stops) |> float32
 
-    let table = 
+    let table =
         data.Rows
         |> Seq.take 5
         |> Seq.map (fun row -> sprintf "%s|%i \n" row.StationName (row.Stops/14/7))

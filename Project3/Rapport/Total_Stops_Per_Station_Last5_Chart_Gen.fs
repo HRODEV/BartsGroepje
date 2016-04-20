@@ -15,7 +15,7 @@ let GetChart() =
                             |> Seq.take 5
                             |> Seq.map (fun row -> row.StationName, (row.Stops/14/7)), "Top 5 minste stops per station", "Top 5 minste stops per station").With3D()
 
-    let table = 
+    let table =
         data.Rows
         |> Seq.take 5
         |> Seq.map (fun row -> sprintf "%s|%i \n" row.StationName row.Stops)

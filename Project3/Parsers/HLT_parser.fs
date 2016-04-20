@@ -1,7 +1,7 @@
 ﻿module HLT_parser
 open System.IO
 
-type StationStop = 
+type StationStop =
     {
         OverStap: bool
         Code: string
@@ -9,7 +9,7 @@ type StationStop =
         RDY: float32
         Name: string
     }
-type Station = 
+type Station =
     {
         Name:string
         RDX:float32
@@ -42,8 +42,8 @@ let FilterMetroStops stationStops (rides: PAS_parser.trip list) =
 let ConvertStopsToStations (stops: StationStop list) =
     printfn "Creating Stations"
     let groups = stops |> Seq.groupBy (fun station -> station.Name)
-    groups 
-    |> Seq.map (fun group -> 
+    groups
+    |> Seq.map (fun group ->
         {Name=(group |> fst);
         RDX=((group |> snd) |> Seq.head).RDX;
         RDY=((group |> snd) |> Seq.head).RDY; Stops= (snd group) |> Seq.toList })

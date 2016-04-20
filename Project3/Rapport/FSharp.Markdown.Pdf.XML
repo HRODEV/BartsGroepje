@@ -3,23 +3,20 @@
 <assembly><name>FSharp.Markdown.Pdf</name></assembly>
 <members>
 <member name="T:AssemblyInfo">
-
 </member>
 <member name="">
-
 </member>
 <member name="">
-
 </member>
 <member name="M:FSharp.Markdown.Pdf.MarkdownPdf.Write(FSharp.Markdown.MarkdownDocument,System.IO.Stream)">
 <summary>
- Transform the provided Markdown document into PDF. The result will be 
+ Transform the provided Markdown document into PDF. The result will be
  written to the provided stream.
 </summary>
 </member>
 <member name="M:FSharp.Markdown.Pdf.MarkdownPdf.Write(FSharp.Markdown.MarkdownDocument,System.String)">
 <summary>
- Transform the provided Markdown document into PDF. The result will be 
+ Transform the provided Markdown document into PDF. The result will be
  written to the provided output path.
 </summary>
 </member>
@@ -31,7 +28,7 @@
 </member>
 <member name="M:FSharp.Markdown.Pdf.MarkdownPdf.Transform(System.String,System.String)">
 <summary>
- Transform Markdown document into PDF. The result will be written to the 
+ Transform Markdown document into PDF. The result will be written to the
  provided output path.
 </summary>
 </member>
@@ -54,7 +51,6 @@
 </summary>
 </member>
 <member name="">
-
 </member>
 <member name="M:FSharp.Markdown.Pdf.MarkdownExt.Markdown.AddMarkdown.Static(MigraDoc.DocumentObjectModel.Document,MigraDoc.DocumentObjectModel.Section,FSharp.Markdown.MarkdownDocument)">
 <summary>
@@ -70,13 +66,13 @@
 </member>
 <member name="M:FSharp.Markdown.Pdf.MarkdownExt.Markdown.WritePdf.Static(FSharp.Markdown.MarkdownDocument,System.IO.Stream)">
 <summary>
- Transform the provided Markdown document into PDF. The result will be 
+ Transform the provided Markdown document into PDF. The result will be
  written to the provided stream.
 </summary>
 </member>
 <member name="M:FSharp.Markdown.Pdf.MarkdownExt.Markdown.WritePdf.Static(FSharp.Markdown.MarkdownDocument,System.String)">
 <summary>
- Transform the provided Markdown document into PDF. The result will be 
+ Transform the provided Markdown document into PDF. The result will be
  written to the provided output path.
 </summary>
 </member>
@@ -88,54 +84,39 @@
 </member>
 <member name="M:FSharp.Markdown.Pdf.MarkdownExt.Markdown.TransformPdf.Static(System.String,System.String)">
 <summary>
- Transform Markdown document into PDF. The result will be written to the 
+ Transform Markdown document into PDF. The result will be written to the
  provided output path.
 </summary>
 </member>
 <member name="T:FSharp.Markdown.Pdf.MarkdownExt">
-
 </member>
 <member name="">
-
 </member>
 <member name="">
-
 </member>
 <member name="">
-
 </member>
 <member name="">
-
 </member>
 <member name="">
-
 </member>
 <member name="">
-
 </member>
 <member name="">
-
 </member>
 <member name="">
-
 </member>
 <member name="">
-
 </member>
 <member name="">
-
 </member>
 <member name="">
-
 </member>
 <member name="">
-
 </member>
 <member name="">
-
 </member>
 <member name="">
-
 </member>
 <member name="T:FSharp.Markdown.Pdf.MarkdownStyleNames">
 <summary>
@@ -146,12 +127,11 @@
 <member name="M:FSharp.Markdown.Pdf.PdfFormatting.formatMarkdown(MigraDoc.DocumentObjectModel.Document,System.Collections.Generic.IDictionary{System.String,System.Tuple{System.String,Microsoft.FSharp.Core.FSharpOption{System.String}}},Microsoft.FSharp.Collections.FSharpList{FSharp.Markdown.MarkdownParagraph})">
 <summary>
  function to format a set of reference links and the tokenized Markdown document into
- a PdfDocument value using the Document value specified (which can contain style 
+ a PdfDocument value using the Document value specified (which can contain style
  overrides for all the styles listed in MarkdownStyleNames).
 </summary>
 </member>
 <member name="T:FSharp.Markdown.Pdf.PdfFormatting">
-
 </member>
 </members>
 </doc>

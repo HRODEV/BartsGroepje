@@ -5,7 +5,7 @@ open System.IO
 let PAS_file = System.Environment.CurrentDirectory + "/RET.PAS"
 
 #region // type definitions
-type stop = 
+type stop =
     {
         id          :   string
         arrival     :   TimeSpan
@@ -35,9 +35,8 @@ type trip =
         }
 #endregion
 
-
 #region // Parses start date before the rest, and uses the VTN to get all the dates.
-let private parseStartDate (s: string) = 
+let private parseStartDate (s: string) =
     System.DateTime(
         s.Substring(5,4) |> int,
         s.Substring(3,2) |> int,
@@ -45,7 +44,6 @@ let private parseStartDate (s: string) =
     )
 let private scheduleDates = System.IO.File.ReadAllLines PAS_file |> fun s -> parseStartDate s.[1] |> fun bd -> VTN_parser.GetVTNRecords bd
 #endregion
-
 
 #region// All the individual parsing functions for each line
 let private parseStop (s: string) =
@@ -70,7 +68,6 @@ let private parseTripInfo (s: string) (t: trip) =
 
 let private parseActiveDays (s: string) = s.Substring (1) |> int |> fun s -> scheduleDates.Item s
 #endregion
-
 
 #region// Main parsing functions
 
@@ -98,7 +95,7 @@ let rec private splitTrip acc (reader: StreamReader) =
     else
         acc
 
-let parse_PAS (s:string) = 
+let parse_PAS (s:string) =
     printfn "Parsing trips."
     match splitTrip [] (new StreamReader(s)) with
     | h :: t    -> t

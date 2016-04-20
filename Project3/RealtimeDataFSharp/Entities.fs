@@ -26,7 +26,7 @@ type GameSpeed = {
 } with
     member x.GetSpeed = x.Speed
     static member Create position =
-        {  
+        {
             Speed = 1
             Position = position
         }
@@ -43,12 +43,12 @@ type GameSpeed = {
     static member Update(lastGameSpeed : GameSpeed) =
         let currentKeyboard = Keyboard.GetState()
         { lastGameSpeed with
-            Speed = if currentKeyboard.IsKeyDown(Keys.D1) then 1 
-                    else if currentKeyboard.IsKeyDown(Keys.D2) then 50 
-                    else if currentKeyboard.IsKeyDown(Keys.D3) then 250 
+            Speed = if currentKeyboard.IsKeyDown(Keys.D1) then 1
+                    else if currentKeyboard.IsKeyDown(Keys.D2) then 50
+                    else if currentKeyboard.IsKeyDown(Keys.D3) then 250
                     else if currentKeyboard.IsKeyDown(Keys.D4) then 1000
                     else if currentKeyboard.IsKeyDown(Keys.D5) then 5000
-                    else if currentKeyboard.IsKeyDown(Keys.P) then 0 
+                    else if currentKeyboard.IsKeyDown(Keys.P) then 0
                     else lastGameSpeed.GetSpeed
         }
 
@@ -73,7 +73,7 @@ type InfoBox =
             bg = bg
             graph = SnakeDiagram.Create (new Rectangle(30,25,203,74)) (new Vector2(-0.1f, 0.0f)) textures.["metro"]
         }
-    
+
     member this.Draw (spriteBatch: SpriteBatch) (metro: int) (distance: int) (fonts: Map<string, Font>) =
         let fr = new FontRenderer(fonts.["Futura"].Data, fonts.["Futura"].Image);
         spriteBatch.Draw(this.bg, this.rect, Color.White);
@@ -114,14 +114,14 @@ type Station = {
 } with
   member this.Draw(texture: Texture2D, spriteBatch: SpriteBatch) =
         spriteBatch.Draw(texture, new Rectangle((int)this.Position.X - 10, (int)this.Position.Y - 10, 20, 20), Color.White);
-  
+
   static member Create(station: stationData.Value, scaler: Vector2 -> Vector2) =
       {
           Name = station.Name
           Position = scaler (new Vector2((float32)station.X, (float32)station.Y))
       }
 
-type TrainStatus = 
+type TrainStatus =
     | Waiting of DateTime
     | Moving of TimeSpan
     | Arrived
@@ -135,13 +135,13 @@ type CounterBox = {
             Position = position
             Time = time
         }
-    static member Draw(box: CounterBox, font: Font, texture: Texture2D, spriteBatch: SpriteBatch) = 
+    static member Draw(box: CounterBox, font: Font, texture: Texture2D, spriteBatch: SpriteBatch) =
         spriteBatch.Draw(texture, new Rectangle((int)box.Position.X, (int)box.Position.Y, 700, 135), Color.Black)
         let fr = new FontRenderer(font.Data, font.Image)
         fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 15, box.Time.ToString("dddd d MMMM", CultureInfo.CreateSpecificCulture("en-US")))
         fr.DrawText(spriteBatch, (int)box.Position.X + 15, (int)box.Position.Y + 80, box.Time.ToString("HH:mm:ss", CultureInfo.CreateSpecificCulture("en-US")))
-        
-    static member Update(box: CounterBox, newTime : DateTime) = 
+
+    static member Update(box: CounterBox, newTime : DateTime) =
         {
             Position = box.Position
             Time = newTime
@@ -152,14 +152,14 @@ type Metro = {
     RideStops : RideStop list
     Position : Vector2
     Status : TrainStatus
-    Behaviour : DateTime -> Coroutine<Unit, Metro> 
+    Behaviour : DateTime -> Coroutine<Unit, Metro>
 } with
     static member Update (dt : DateTime) (x: Metro) =
         let _, metro' = costep (x.Behaviour dt) x
         metro'
 
     member this.Draw(texture: Texture2D, spriteBatch: SpriteBatch) =
-            let color = match this.Line with A -> Color.Green | B -> Color.Yellow | C -> Color.Red | D -> Color.LightBlue | E -> Color.Blue 
+            let color = match this.Line with A -> Color.Green | B -> Color.Yellow | C -> Color.Red | D -> Color.LightBlue | E -> Color.Blue
             spriteBatch.Draw(texture, new Rectangle((int)this.Position.X - 5, (int)this.Position.Y - 5, 10, 10), color)
             ()
 
@@ -175,11 +175,10 @@ type Metro = {
 
     static member CalculateDistance (metro: Metro) (metros: Metro list) = metros |> List.fold (fun tdist m -> let dist = int (Vector2.Distance(metro.Position, m.Position)) in if dist < 1 then tdist else if tdist < dist then dist else tdist) 0
 
-
 let MetroProgram2() (dt : DateTime) : Coroutine<Unit, Metro> =
     let DriveMetro (time : TimeSpan) (dt : DateTime) : Coroutine<bool, Metro> = fun metro ->
         match metro.RideStops with
-        | current :: t when not t.IsEmpty ->      
+        | current :: t when not t.IsEmpty ->
                                 let next = t.Head
                                 let duration = next.Arrival - current.Arrival
 
@@ -190,14 +189,14 @@ let MetroProgram2() (dt : DateTime) : Coroutine<Unit, Metro> =
                                 Done(dt >= next.Arrival , {metro with Position = new Vector2(newPosX, newPosY); Status = Moving ((dt - current.Departure))})
         | _ -> Done(true, metro)
 
-    let inline WaitMetro (departureTime : DateTime) (currentTime : DateTime) : Coroutine<TimeSpan, Metro> = fun metro ->   
+    let inline WaitMetro (departureTime : DateTime) (currentTime : DateTime) : Coroutine<TimeSpan, Metro> = fun metro ->
         let newTime = departureTime - currentTime
         Done(newTime, metro)
 
-    let inline SetMetroStatus (status : TrainStatus) : Coroutine<Unit, Metro> = fun metro -> 
+    let inline SetMetroStatus (status : TrainStatus) : Coroutine<Unit, Metro> = fun metro ->
         Done((), {metro with Status = status})
 
-    let inline SetNextStation (metro : Metro) = 
+    let inline SetNextStation (metro : Metro) =
         match metro.RideStops with
         | h :: t -> Done((), {metro with RideStops = t})
         | _ -> Done((), metro)
@@ -205,7 +204,7 @@ let MetroProgram2() (dt : DateTime) : Coroutine<Unit, Metro> =
     co{
         let! metro = getState
         match metro.Status with
-        | Waiting r ->  let! timeRemaining = WaitMetro r dt; 
+        | Waiting r ->  let! timeRemaining = WaitMetro r dt;
                         if timeRemaining > TimeSpan.Zero then
                             do! SetMetroStatus (Waiting r)
                             do! yield_
@@ -223,4 +222,3 @@ let MetroProgram2() (dt : DateTime) : Coroutine<Unit, Metro> =
                             do! yield_
         | Arrived ->    return ()
       }
-

@@ -13,7 +13,6 @@ let data = CsvProvider<"Data/CountStopsPerHourInDays.csv">.GetSample()
 
 //data.Rows |> Seq.map (fun row -> row.Hour)
 
-
 //printfn "%A" data
 
 let chart = Chart.Column(data.Rows |> Seq.map (fun row -> (sprintf "%i:00" row.Hour), row.CountRides)).ShowChart()

@@ -27,7 +27,7 @@ let private makeActiveOnQuery   (x: trip) (y: System.DateTime) = System.String.F
 let makePlatformQuery' (station:Station) =
     let StationQ = makeStationQuery station
     let getscopeID = "\nset @lastStationID = SCOPE_IDENTITY(); \n"
-    let platforms = 
+    let platforms =
             @"INSERT INTO [retdb].[dbo].[Platforms]
                ([Code]
                ,[X]
@@ -36,7 +36,6 @@ let makePlatformQuery' (station:Station) =
          VALUES " + (station.Stops |> List.map (fun stop -> sprintf "('%s','%f','%f',@lastStationID)" stop.Code stop.RDX stop.RDY )  |> String.concat ",")
 
     StationQ + getscopeID + platforms
-
 
 let private WriteSQLFile (fname: string) (seq: string seq) =
     printfn "Creating SQL file %A: " fname

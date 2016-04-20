@@ -6,11 +6,11 @@ open Microsoft.Xna.Framework.Graphics
 open Microsoft.Xna.Framework.Input
 open FSharp.Data
 
-let easeInOutQuad2 (currentTime : float32) (startPos : float32) (endPos : float32) (duration : float32) =   
+let easeInOutQuad2 (currentTime : float32) (startPos : float32) (endPos : float32) (duration : float32) =
     let newTime = currentTime / (duration / 2.0f)
     if ( newTime < 1.0f ) then
         startPos + newTime * newTime * endPos / 2.0f
-    else 
+    else
         let newTime' = newTime - 1.0f
         startPos + (-endPos / 2.0f * (newTime' * (newTime' - 2.0f) - 1.0f))
 
@@ -22,13 +22,12 @@ let ScalePosition (screen: Vector2) (view: Rectangle) (padding: float32) (positi
     let viewwidth = (float32)view.Width
     let viewheight = (float32)view.Height
 
-    let pixelsPerUnit = 
+    let pixelsPerUnit =
         if (viewwidth / (viewheight / paddedHeight)) > screen.X then
             (viewwidth / paddedWidth)
         else
             (viewheight / paddedHeight)
 
-    
     let posX = (position.X - (float32)view.Left) / pixelsPerUnit
     let posY = ((position.Y - (float32)view.Top) / pixelsPerUnit) * -1.0f
     let areaPixelWidth = viewwidth / pixelsPerUnit
@@ -39,11 +38,9 @@ let ScalePosition (screen: Vector2) (view: Rectangle) (padding: float32) (positi
 
     new Vector2(posX + ((screen.X - areaPixelWidth) / 2.0f), posY + ((screen.Y - areaPixelHeight) / 2.0f))
 
-
 let screenWidth = 1920.0f
 let screenHeight = 1080.0f
 let scaler = ScalePosition (new Vector2(screenWidth, screenHeight)) (CreateViewRectangle(new Point(81493, 443705), new Point(100854, 427738))) 0.95f
-
 
 open System.Collections.Generic
 open System.IO
@@ -85,7 +82,7 @@ type FontInfo() =
     [<XmlAttribute("padding")>]
     member x.Padding
         with get() = sprintf "%d,%d,%d,%d" _padding.X _padding.Y _padding.Width _padding.Height
-        and set(value : string) = 
+        and set(value : string) =
             let padding = value.Split(',')
             _padding <- Rectangle((int)padding.[0],
                                   (int)padding.[1],
@@ -95,14 +92,13 @@ type FontInfo() =
     [<XmlAttribute("spacing")>]
     member x.Spacing
         with get() = sprintf "%d,%d" _spacing.X _spacing.Y
-        and set(value : string) = 
+        and set(value : string) =
             let spacing = value.Split(',')
             _spacing <- Point((int)spacing.[0],
                               (int)spacing.[1])
 
     [<XmlAttribute("outline")>]
     member val OutLine = 0 with get, set
-
 
 type FontCommon() =
     [<XmlAttribute("lineHeight")>]

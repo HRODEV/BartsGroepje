@@ -26,12 +26,12 @@ type SnakeDiagram =
         }
 
     member this.Draw (spriteBatch: SpriteBatch) =
-        this.points |> List.fold (fun prev curr -> 
+        this.points |> List.fold (fun prev curr ->
                                     do snakeLine.Draw spriteBatch curr.position prev.position this.texture
                                     curr) this.playhead |> ignore
 
     static member Update (d: SnakeDiagram) s =
-        let s' = 
+        let s' =
             match s with
             | 0 -> 0.1f
             | 1 -> 0.1f
@@ -54,7 +54,7 @@ and snakePoint =
         position: Vector2
     } with
 
-    static member Zero = 
+    static member Zero =
         { value = 0.0f; position = Vector2.Zero }
 
     static member Create value position = { value = value; position = position; }
