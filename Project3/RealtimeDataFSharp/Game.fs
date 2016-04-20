@@ -57,7 +57,8 @@ type TrainSimulation() as this =
             Map.empty.
                 Add("font1", {Image = (spriteLoader "Font.png" this.GraphicsDevice); Data = FontLoader.Load("Font.fnt")}).
                 Add("Arial", {Image = (spriteLoader "Arial_0.png" this.GraphicsDevice); Data = FontLoader.Load("Arial.fnt")}).
-                Add("Timer", {Image = (spriteLoader "Timer_0.png" this.GraphicsDevice); Data = FontLoader.Load("Timer.fnt")})
+                Add("Timer", {Image = (spriteLoader "Timer_0.png" this.GraphicsDevice); Data = FontLoader.Load("Timer.fnt")}).
+                Add("Futura", {Image = (spriteLoader "Futura25.png" this.GraphicsDevice); Data = FontLoader.Load("Futura25.fnt")})
 
         gameState <- {GameState.Create(scaler, [StateFetchRideLogic(); MainStateLogic()], textures) with Fonts = fonts}
         ()
