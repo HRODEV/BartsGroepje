@@ -14,7 +14,8 @@ let GetChart() =
         |> Seq.take 5
         |> Seq.map (fun row -> sprintf "%s|%i \n" row.StationName row.Stops)
         |> Seq.reduce (+)
-    chart
+    chart.WithXAxis(true, "Stations naam")
+        .WithYAxis(true, "Aantal ritten")
 
 let GetForm() = 
     GetChart().ShowChart()

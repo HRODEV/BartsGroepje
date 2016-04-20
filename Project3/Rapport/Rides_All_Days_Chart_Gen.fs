@@ -8,7 +8,7 @@ let getChart () =
     let prepared = 
         data.Rows |> Seq.map (fun row -> row.Date, row.Count)
     let chart = Chart.Line (prepared, "Aantal ritten per dag", "aantal ritten per dag")
-    chart
+    chart.WithXAxis(true, "data").WithYAxis(true, "aantal ritten")
 
 let GetForm() = 
     getChart().ShowChart()
