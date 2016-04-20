@@ -57,7 +57,7 @@
             this.startSimulationButton.Name = "startSimulationButton";
             this.startSimulationButton.Size = new System.Drawing.Size(266, 71);
             this.startSimulationButton.TabIndex = 1;
-            this.startSimulationButton.Text = "start simulatie";
+            this.startSimulationButton.Text = "Start simulatie";
             this.startSimulationButton.UseVisualStyleBackColor = true;
             this.startSimulationButton.Click += new System.EventHandler(this.startSimulationButton_Click);
             // 
@@ -67,7 +67,7 @@
             this.RideHourDayButton.Name = "RideHourDayButton";
             this.RideHourDayButton.Size = new System.Drawing.Size(116, 23);
             this.RideHourDayButton.TabIndex = 2;
-            this.RideHourDayButton.Text = "ritten per uur en dag";
+            this.RideHourDayButton.Text = "Ritten per uur en dag";
             this.RideHourDayButton.UseVisualStyleBackColor = true;
             this.RideHourDayButton.Click += new System.EventHandler(this.RideHourDayButton_Click);
             // 
@@ -103,11 +103,11 @@
             // 
             // StopsPerDayButton
             // 
-            this.StopsPerDayButton.Location = new System.Drawing.Point(652, 388);
+            this.StopsPerDayButton.Location = new System.Drawing.Point(648, 388);
             this.StopsPerDayButton.Name = "StopsPerDayButton";
             this.StopsPerDayButton.Size = new System.Drawing.Size(124, 23);
             this.StopsPerDayButton.TabIndex = 7;
-            this.StopsPerDayButton.Text = "stops per dag";
+            this.StopsPerDayButton.Text = "Ritten per dag";
             this.StopsPerDayButton.UseVisualStyleBackColor = true;
             this.StopsPerDayButton.Click += new System.EventHandler(this.StopsPerDayButton_Click);
             // 
