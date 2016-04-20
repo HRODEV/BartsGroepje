@@ -8,6 +8,7 @@ open Coroutines
 open Utilities
 open System
 open Entities
+open HeatMap2
 
 #REGION
 //GameState Type
@@ -20,6 +21,7 @@ type GameState = {
     Time        : DateTime
     GameSpeed   : GameSpeed
     CounterBox  : CounterBox
+    HeatMap     : HeatMap
     Behaviour   : Coroutine<unit, GameState> list
     Count       : int
     dt          : GameTime
@@ -33,6 +35,7 @@ type GameState = {
         gameState.Stations |> List.iter(fun s -> s.Draw(gameState.Textures.["station"], spriteBatch))
         CounterBox.Draw(gameState.CounterBox, gameState.Fonts.["Timer"], gameState.Textures.["plain"], spriteBatch)
         GameSpeed.Draw(gameState.GameSpeed, gameState.Fonts.["Timer"], spriteBatch)
+        if gameState.HeatMap.Active then HeatMap.Draw(gameState.HeatMap, gameState.Textures.["plain"], spriteBatch) else ()
         gameState.infobox.Draw spriteBatch (gameState.Metros.Length) (gameState.Metros |> List.fold (fun a m -> Metro.CalculateDistance m gameState.Metros + a) 0 |> fun x -> if gameState.Metros.Length <> 0 then x / gameState.Metros.Length else 0) gameState.Fonts
 
     static member Create(scaler: Vector2 -> Vector2, behaviour: Coroutine<unit, GameState> list, textures: Map<string, Texture2D>) =
@@ -62,6 +65,7 @@ type GameState = {
             Count = 20
             dt = new GameTime()
             infobox = InfoBox.Zero()
+            HeatMap = HeatMap.Create(32, 32)
         }
 
     static member Update(gameState: GameState, dt: GameTime) =
@@ -70,7 +74,7 @@ type GameState = {
             fun (acc: GameState) x ->
                 let behaviour', state' = (singlestep x acc)
                 {state' with Behaviour = behaviour' :: state'.Behaviour}
-        ) {gameState with Behaviour = []; dt = dt; infobox = InfoBox.Update gameState.infobox gameState.GameSpeed (float32 gameState.Metros.Length)}
+        ) {gameState with Behaviour = []; dt = dt; HeatMap = HeatMap.Update(gameState.HeatMap, gameState.Metros); infobox = InfoBox.Update gameState.infobox gameState.GameSpeed (float32 gameState.Metros.Length)}
 #ENDREGION
 
 #REGION
