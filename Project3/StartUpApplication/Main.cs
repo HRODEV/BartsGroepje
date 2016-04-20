@@ -17,28 +17,28 @@ namespace StartUpApplication
 
         private void RideHourDayButton_Click(object sender, EventArgs e)
         {
-            Ride_Hour_Day_Chart_Gen.GetChart();
+            Ride_Hour_Day_Chart_Gen.GetChart().TopMost = false;
         }
 
         private void Total_Ride_Lines_Chart_Gen_Click(object sender, EventArgs e)
         {
-            Total_Ride_Lines_Chart_Gen.GetChart();
+            Total_Ride_Lines_Chart_Gen.GetChart().TopMost = false;
         }
 
         private void StopsPerStationButton_Click(object sender, EventArgs e)
         {
-            Total_Stops_Per_Station_Chart_Gen.GetChart();
-            Total_Stops_Per_Station_Last5_Chart_Gen.GetChart();
+            Total_Stops_Per_Station_Chart_Gen.GetChart().TopMost = false;
+            Total_Stops_Per_Station_Last5_Chart_Gen.GetChart().TopMost = false;
         }
 
         private void StationsPerLineButton_Click(object sender, EventArgs e)
         {
-            Line_Has_Stations_Chart_Gen.GetChart();
+            Line_Has_Stations_Chart_Gen.GetChart().TopMost = false;
         }
 
         private void StopsPerDayButton_Click(object sender, EventArgs e)
         {
-            RidesAllDays.getChart();
+            RidesAllDays.getChart().TopMost = false;
         }
     }
 }
