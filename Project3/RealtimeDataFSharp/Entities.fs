@@ -66,7 +66,7 @@ type InfoBox =
         {
             rect = box
             bg = bg
-            graph = SnakeDiagram.Create (new Rectangle(30,25,203,74)) (new Vector2(-0.1f, 0.0f)) textures.["metro"]
+            graph = SnakeDiagram.Create (new Rectangle(30,25,431,76)) (new Vector2(-0.1f, 0.0f)) textures.["metro"]
         }
 
     member this.Draw (spriteBatch: SpriteBatch) (metro: int) (distance: int) (fonts: Map<string, Font>) =
