@@ -94,6 +94,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Samples\RidesAndRideStopsAndPlatformAndStation.json" />
+    <Compile Include="Config.fs" />
     <Compile Include="Coroutines.fs" />
     <Compile Include="Utilities.fs" />
     <Compile Include="SnakeDiagram.fs" />

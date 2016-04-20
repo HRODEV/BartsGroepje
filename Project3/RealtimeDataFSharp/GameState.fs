@@ -39,8 +39,8 @@ type GameState = {
         gameState.infobox.Draw spriteBatch (gameState.Metros.Length) (gameState.Metros |> List.fold (fun a m -> Metro.CalculateDistance m gameState.Metros + a) 0 |> fun x -> if gameState.Metros.Length <> 0 then x / gameState.Metros.Length else 0) gameState.Fonts
 
     static member Create(scaler: Vector2 -> Vector2, behaviour: Coroutine<unit, GameState> list, textures: Map<string, Texture2D>) =
-        let stationList =  (stationData.Load("http://145.24.222.212/v2/odata/Stations").Value |> Array.map (fun st -> Station.Create(st, scaler))) |> List.ofArray
-        let rides = (rideData.Load("http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform,Line&$top=20&$orderby=Date").Value) |> List.ofArray
+        let stationList =  (stationData.Load(Config.API.createURL "Stations").Value |> Array.map (fun st -> Station.Create(st, scaler))) |> List.ofArray
+        let rides = (rideData.Load(Config.API.createURL "Rides/?$expand=RideStops/Platform,Line&$top=20&$orderby=Date").Value) |> List.ofArray
 
         { GameState.Zero() with
             Stations = stationList
@@ -93,7 +93,8 @@ let private CreateMetrosFromRides (rides: rideData.Value list)=
         let rec looper (rides: rideData.Value list) =
             match rides with
             | h :: t    ->
-                let line = match h.Line.Name with
+                let line = 
+                    match h.Line.Name with
                     | "A" -> A
                     | "B" -> B
                     | "C" -> C
@@ -163,7 +164,7 @@ let rec StateFetchRideLogic () =
         if state.Rides.Length > 400 then
             do! yield_
         else
-            let str = sprintf "http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform,Line&$top=100&$orderby=Date&$skip=%i" state.Count
+            let str = Config.API.createURL (sprintf "Rides/?$expand=RideStops/Platform,Line&$top=100&$orderby=Date&$skip=%i" state.Count)
             let! task = ASyncDataRequest str
             let! rides = ASyncDataParse task
             if rides.Length <> 0 then

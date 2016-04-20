@@ -28,8 +28,8 @@ type TrainSimulation() as this =
     let mutable snakeDiagram = SnakeDiagram.Create (new Rectangle(0,0,100,50)) (new Vector2(0.1f, 0.0f))
 
     override x.Initialize() =
-        graphics.PreferredBackBufferWidth <- (int) screenWidth;  // set this value to the desired width of your window
-        graphics.PreferredBackBufferHeight <- (int) screenHeight;   // set this value to the desired height of your window
+        graphics.PreferredBackBufferWidth <- (int) Config.Screen.width;  // set this value to the desired width of your window
+        graphics.PreferredBackBufferHeight <- (int) Config.Screen.height;   // set this value to the desired height of your window
 
         graphics.IsFullScreen <- true
         graphics.ApplyChanges();

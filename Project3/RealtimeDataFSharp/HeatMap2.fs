@@ -41,8 +41,8 @@ type HeatMap =
     static member Create(r : int, l : int) =
         let rec createCellList i j list : Cell list =  
             if i >= 0 then
-                let width = (1920 / l)
-                let height = (1080 / r)
+                let width = (int)(Config.Screen.width) / l
+                let height = (int)(Config.Screen.height) / r
                 let cell = Cell.Create(new Vector2(float32(i * width) + 3.0f, float32(j * height) + 3.0f), float32(width - 6), float32(height - 6))
                 let newList = [cell] @ list
                 createCellList (i - 1) j newList

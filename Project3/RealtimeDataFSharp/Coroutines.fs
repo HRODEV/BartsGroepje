@@ -32,7 +32,7 @@ let rec costep coroutine state =
   | Done(_, newState) ->  (fun s -> Done((), s)), newState
   | Wait(c', s') -> costep c' s'
 
-let rec singlestep coroutine state =
+let singlestep coroutine state =
   match coroutine state with
       | Done(_, newState) ->  (fun s -> Done((), s)), newState
       | Wait(c', s') -> c', s'

@@ -38,9 +38,7 @@ let ScalePosition (screen: Vector2) (view: Rectangle) (padding: float32) (positi
 
     new Vector2(posX + ((screen.X - areaPixelWidth) / 2.0f), posY + ((screen.Y - areaPixelHeight) / 2.0f))
 
-let screenWidth = 1920.0f
-let screenHeight = 1080.0f
-let scaler = ScalePosition (new Vector2(screenWidth, screenHeight)) (CreateViewRectangle(new Point(81493, 443705), new Point(100854, 427738))) 0.95f
+let scaler = ScalePosition (new Vector2(Config.Screen.width, Config.Screen.height)) (CreateViewRectangle(new Point(81493, 443705), new Point(100854, 427738))) 0.95f
 
 open System.Collections.Generic
 open System.IO
