@@ -11,4 +11,4 @@ let getChart () =
     chart
 
 let GetForm() = 
-    GetChart().ShowChart()
+    getChart().ShowChart()

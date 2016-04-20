@@ -33,6 +33,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ret.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="FSharp.Charting, Version=0.90.13.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FSharp.Charting.0.90.13\lib\net40\FSharp.Charting.dll</HintPath>
@@ -111,6 +114,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="RETlogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ret.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
