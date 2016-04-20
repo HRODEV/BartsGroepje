@@ -1,15 +1,9 @@
 USE [retdbim]
 GO
 
-SELECT rs.day, Count(*) as countRides FROM
-	(SELECT * FROM Rides) as r
-INNER JOIN
-	(SELECT 
-		*, 
-		CONVERT(date, RideStops.Time) as 'day'
-	FROM RideStops) 
-	as rs
-ON r.Id = rs.RideId
-
-GROUP BY rs.day
-ORDER BY rs.day;
+SELECT 
+	CONVERT(date, Rides.Date) as d,
+	Count(*)
+FROM Rides
+GROUP BY CONVERT(date, Rides.Date)
+Order By d;

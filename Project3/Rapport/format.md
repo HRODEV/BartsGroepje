@@ -6,7 +6,6 @@ Damien Rietdijk		0916447
 Barld Boot			0911517
 
 Generated at: {|date|}
-___
 
 ![Chart1]({|Ride_Hour_Day|})
 ![Chart2]({|Total_Ride_Lines|})
