@@ -162,6 +162,10 @@ let rec StateFetchRideLogic () =
             let str = sprintf "http://145.24.222.212/v2/odata/Rides/?$expand=RideStops/Platform,Line&$top=100&$orderby=Date&$skip=%i" state.Count
             let! task = ASyncDataRequest str
             let! rides = ASyncDataParse task
-            do! LoadRides rides
+            if rides.Length <> 0 then
+                do! LoadRides rides
+            else
+                do! yield_
+                return ()
     } |> repeat_
 #ENDREGION

@@ -79,7 +79,8 @@ type InfoBox =
         spriteBatch.Draw(this.bg, this.rect, Color.White);
         this.graph.Draw(spriteBatch);
         fr.DrawText(spriteBatch, this.rect.X + 10, this.rect.Y + 120, metro.ToString());
-        fr.DrawText(spriteBatch, this.rect.X + 10, this.rect.Y + 190, distance.ToString());
+        let distance' = sprintf "%04d M" distance
+        fr.DrawText(spriteBatch, this.rect.X + 10, this.rect.Y + 190, distance');
 
     static member Update (infoBox: InfoBox) (gs: GameSpeed) (point: float32) =
         let infobox' = InfoBox.AddPoint infoBox point
