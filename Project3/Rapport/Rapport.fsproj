@@ -64,6 +64,7 @@
     <Compile Include="Line_Has_Stations_Chart_Gen.fs" />
     <Compile Include="Total_Stops_Per_Station_Chart_Gen.fs" />
     <Compile Include="Total_Stops_Per_Station_Last5_Chart_Gen.fs" />
+    <Compile Include="RidesAllDays.fs" />
     <None Include="Script.fsx" />
     <None Include="App.config" />
     <Content Include="packages.config" />
@@ -87,6 +88,9 @@
     </None>
     <None Include="Data\TotalStopsPerStation.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\RidesAllDays.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scripts\load-project-debug.fsx" />
     <None Include="Scripts\load-references-debug.fsx" />

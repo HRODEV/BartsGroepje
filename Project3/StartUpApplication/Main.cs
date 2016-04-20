@@ -35,5 +35,10 @@ namespace StartUpApplication
         {
             Line_Has_Stations_Chart_Gen.GetChart();
         }
+
+        private void StopsPerDayButton_Click(object sender, EventArgs e)
+        {
+            RidesAllDays.getChart();
+        }
     }
 }
