@@ -25,11 +25,16 @@ let GetChart() =
 
     let chart = Chart.Combine(data.Rows 
                                 (* sort days to ma di wo do vr za zo *)
-                                |> Seq.sortBy(fun row -> (row.Day_Of_Week+6)%8)
-                                |> Seq.groupBy(fun row -> row.Day_Of_Week )
-                                |> Seq.map (fun (day, rows) -> Chart.Line(rows 
-                                    (* Sort time to normal format *)
-                                    |> Seq.sortBy(fun row -> (row.Hour+24) % 27) 
-                                    |> Seq.map (fun row -> (sprintf "%i:00" row.Hour), row.CountRides/14), (GetDayOfWeek day)))).WithLegend(true)
+                                    |> Seq.sortBy(fun row -> (row.Day_Of_Week+6)%8)
+                                    |> Seq.groupBy(fun row -> row.Day_Of_Week )
+                                    |> Seq.map (fun (day, rows) -> Chart.Line(rows 
+                                        (* Sort time to normal format *)
+                                        |> Seq.sortBy(fun row -> (row.Hour+24) % 27) 
+                                        |> Seq.map (fun row -> (sprintf "%i:00" row.Hour), row.CountRides/14), (GetDayOfWeek day)))
+                                ).WithLegend(true).WithTitle("ritten per uur per dag", false)
+                                .WithYAxis(true, "Aantal ritten")
+                                .WithXAxis(true, "tijd")
 
-    chart.ShowChart()
+    let form = chart.ShowChart()
+    form.Text <- "ritten per uur per dag"
+    form
