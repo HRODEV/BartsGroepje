@@ -25,7 +25,6 @@ type TrainSimulation() as this =
     let mutable spriteBatch = Unchecked.defaultof<SpriteBatch>
     let mutable texture = Unchecked.defaultof<Texture2D>
     let mutable gameState = GameState.Zero()
-    let mutable snakeDiagram = SnakeDiagram.Create (new Rectangle(0,0,100,50)) (new Vector2(0.1f, 0.0f))
 
     override x.Initialize() =
         graphics.PreferredBackBufferWidth <- (int) Config.Screen.width;  // set this value to the desired width of your window
@@ -66,9 +65,6 @@ type TrainSimulation() as this =
         gameState <- GameState.Update(gameState, gameTime)
 
     override this.Draw (gameTime) =
-        let mutable metrotexture = new Texture2D(this.GraphicsDevice, 1, 1)
-        metrotexture.SetData([| Color.White |])
-
         do this.GraphicsDevice.Clear Color.CornflowerBlue
         spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
         GameState.Draw(gameState, spriteBatch)

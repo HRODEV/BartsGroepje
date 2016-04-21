@@ -6,6 +6,8 @@ open Microsoft.Xna.Framework.Graphics
 open Microsoft.Xna.Framework.Input
 open FSharp.Data
 
+
+// Formula for creating ease in and out animation on the metros
 let easeInOutQuad2 (currentTime : float32) (startPos : float32) (endPos : float32) (duration : float32) =
     let newTime = currentTime / (duration / 2.0f)
     if ( newTime < 1.0f ) then
@@ -14,8 +16,10 @@ let easeInOutQuad2 (currentTime : float32) (startPos : float32) (endPos : float3
         let newTime' = newTime - 1.0f
         startPos + (-endPos / 2.0f * (newTime' * (newTime' - 2.0f) - 1.0f))
 
+// Creates a view rectangle based on two points.
 let CreateViewRectangle (p1: Point, p2: Point) = new Rectangle(p1, new Point(p2.X - p1.X, p1.Y - p2.Y))
 
+// Scale a position down from a view size to a screen size. Used for properly positioning metro's and stations
 let ScalePosition (screen: Vector2) (view: Rectangle) (padding: float32) (position: Vector2) =
     let paddedHeight = screen.Y * padding
     let paddedWidth = screen.X * padding
@@ -38,6 +42,7 @@ let ScalePosition (screen: Vector2) (view: Rectangle) (padding: float32) (positi
 
     new Vector2(posX + ((screen.X - areaPixelWidth) / 2.0f), posY + ((screen.Y - areaPixelHeight) / 2.0f))
 
+// Shortcut function for above.
 let scaler = ScalePosition (new Vector2(Config.Screen.width, Config.Screen.height)) (CreateViewRectangle(new Point(81493, 443705), new Point(100854, 427738))) 0.95f
 
 open System.Collections.Generic

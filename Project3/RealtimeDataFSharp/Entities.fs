@@ -47,6 +47,7 @@ type GameSpeed = {
                     else lastGameSpeed.GetSpeed
         }
 
+// Info box in the top left
 type InfoBox =
     {
         rect    :   Rectangle

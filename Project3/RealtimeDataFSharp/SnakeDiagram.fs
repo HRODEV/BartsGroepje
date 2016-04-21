@@ -5,6 +5,7 @@ open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 open Microsoft.Xna.Framework.Input
 
+// Snake diagram container
 type SnakeDiagram =
     {
         points      :   snakePoint list
@@ -48,6 +49,8 @@ type SnakeDiagram =
         let newPoint = (snakePoint.Create value pos)
         { d with points = newPoint :: d.points; playhead = newPoint }
 
+
+// Individual point data
 and snakePoint =
     {
         value: float32
@@ -61,6 +64,7 @@ and snakePoint =
 
     member this.Update speed = { this with position = this.position + speed }
 
+// Line data
 and snakeLine =
     static member Draw (spriteBatch: SpriteBatch) (origin: Vector2) (destination: Vector2) (sprite: Texture2D) =
         let distance = Vector2.Distance(origin, destination)

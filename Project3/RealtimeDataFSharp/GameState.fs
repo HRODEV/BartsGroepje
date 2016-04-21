@@ -8,9 +8,8 @@ open Coroutines
 open Utilities
 open System
 open Entities
-open HeatMap2
+open HeatMap
 
-#REGION
 //GameState Type
 type GameState = {
     Metros      : Metro list
@@ -75,10 +74,8 @@ type GameState = {
                 let behaviour', state' = (singlestep x acc)
                 {state' with Behaviour = behaviour' :: state'.Behaviour}
         ) {gameState with Behaviour = []; dt = dt; HeatMap = HeatMap.Update(gameState.HeatMap, gameState.Metros); infobox = InfoBox.Update gameState.infobox gameState.GameSpeed (float32 gameState.Metros.Length)}
-#ENDREGION
 
-#REGION
-//Metro creation coroutine
+//Metro creation coroutines
 let private GetNextReadyRides =
     fun (s: GameState) ->
         let rec looper (x: rideData.Value list) acc =
@@ -88,6 +85,7 @@ let private GetNextReadyRides =
                 | _ -> List.rev acc
         Done(looper s.Rides [], s)
 
+//Creates new metros from the waiting rides
 let private CreateMetrosFromRides (rides: rideData.Value list)=
     fun (s: GameState) ->
         let rec looper (rides: rideData.Value list) =
@@ -105,6 +103,8 @@ let private CreateMetrosFromRides (rides: rideData.Value list)=
             | _         -> []
         Done((), {s with Metros = (looper rides) @ s.Metros})
 
+
+// Removes the departed rides from the ready rides list
 let private RemoveDepartedRides =
     fun (s: GameState) ->
         let rec looper (rides: rideData.Value list) =
@@ -114,6 +114,7 @@ let private RemoveDepartedRides =
                 | _ -> rides
         Done((), {s with Rides = looper s.Rides})
 
+// Updates the gametime to the new time
 let private UpdateTime =
     fun (s: GameState) ->
         let newCounterBox = CounterBox.Update(s.CounterBox, s.Time)
@@ -121,11 +122,13 @@ let private UpdateTime =
         let elapsedTime = new TimeSpan(0, 0, 0, 0, s.dt.ElapsedGameTime.Milliseconds * newGameSpeed.GetSpeed)
         Done((), {s with Time = s.Time + elapsedTime; GameSpeed = newGameSpeed; CounterBox = newCounterBox;})
 
+// Updates the metros
 let private UpdateMetros : Coroutine<unit, GameState> =
     fun (s: GameState) ->
         let metros = s.Metros |> List.map (fun x -> Metro.Update s.Time x) |> List.filter (fun x -> x.Status <> Arrived)
         Done((), {s with Metros = metros})
 
+// The main state logic
 let MainStateLogic() =
     co {
         do! UpdateTime
@@ -135,9 +138,8 @@ let MainStateLogic() =
         do! UpdateMetros
         do! yield_
     } |> repeat_
-#ENDREGION
 
-#REGION
+
 // Async ride fetching from JSON API coroutine.
 let private ASyncDataRequest url =
     fun s ->
@@ -147,17 +149,20 @@ let private ASyncDataRequest url =
         })
         Done(task, s)
 
+// Parsing of the async data retrieval
 let rec private ASyncDataParse (task:Threading.Tasks.Task<rideData.Value[]>) =
     fun s ->
         match task.IsCompleted with
         | true  -> Done(task.Result, s)
         | false -> Wait(ASyncDataParse task, s)
 
+// Loads the new rides
 let rec private LoadRides (rides: rideData.Value[]) =
     fun (s: GameState) ->
         let ridelist = rides |> List.ofArray
         Done((), {s with Rides = List.append s.Rides ridelist; Count = s.Count + 100})
 
+// Complete async monad
 let rec StateFetchRideLogic () =
     co {
         let! state = getState
@@ -173,4 +178,3 @@ let rec StateFetchRideLogic () =
                 do! yield_
                 return ()
     } |> repeat_
-#ENDREGION
